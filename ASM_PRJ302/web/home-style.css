@@ -1,0 +1,244 @@
+/* CSS cho trang Home - Giao diện Dashboard Helios */
+
+/* CSS chung cho trang home */
+.body-home-dashboard {
+    background-color: #f0f2f5;
+    font-family: 'Nunito Sans', sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
+
+.home-main-dashboard {
+    padding-top: 70px;
+    padding-bottom: 30px;
+}
+
+/*  ---  CSS CHO NAVBAR DASHBOARD  ---  */
+
+.header-home {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.home-navbar {
+    background-color: #fff !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    padding: 15px 20px;
+}
+
+.home-logo {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 3.0em;
+    color: #F2C641;
+    text-decoration: none;
+}
+
+.home-logo:hover, .home-logo:focus {
+    color: #F2C641;
+    text-decoration: none;
+}
+
+.home-navbar-nav {
+    align-items: center;
+}
+
+.home-navbar-nav .nav-item {
+    margin-left: 25px; /* Khoảng cách giữa "Trang Chủ" và menu 3 gạch */
+}
+
+.home-navbar-nav .nav-link {
+    color: #777;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.home-navbar-nav .nav-link:hover,
+.home-navbar-nav .nav-link.active {
+    color: #F2C641;
+}
+
+/* CSS cho dropdown menu 3 gạch */
+.home-navbar-nav .dropdown-toggle {
+    padding: 0.5rem 0;
+}
+
+.home-navbar-nav .dropdown-toggle::after {
+    border: none;
+    content: none;
+}
+
+.home-navbar-nav .dropdown-toggle i.fas.fa-bars {
+    font-size: 2.0em;
+    color: #555;
+}
+
+.home-navbar-nav .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-top: 0;
+}
+
+.home-navbar-nav .dropdown-menu .dropdown-item {
+    color: #555;
+    font-weight: 500;
+    padding: 12px 20px;
+}
+
+.home-navbar-nav .dropdown-menu .dropdown-item:hover,
+.home-navbar-nav .dropdown-menu .dropdown-item.active {
+    background-color: #f0f7ff;
+    color: #F2C641;
+}
+
+.home-navbar-nav .dropdown-divider {
+    border-top: 1px solid #e0e0e0;
+}
+
+
+/*  ---  CSS CHO SECTION THÔNG TIN NGƯỜI DÙNG  ---  */
+
+.user-info-section {
+    padding: 30px 0;
+}
+
+.user-info-card {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.user-avatar i.fas.fa-user-circle {
+    color: #90a4ae;
+    opacity: 0.8;
+    width: 70px;
+    height: 70px;
+}
+
+.user-details h3 {
+    font-size: 2em;
+    font-weight: 700;
+    color: #455a64;
+    margin-bottom: 10px;
+}
+
+.user-details p {
+    color: #78909c;
+    font-size: 1.1em;
+}
+
+
+/*  ---  CSS CHO SECTION THÔNG TIN CHỨC VỤ, PHÒNG BAN  ---  */
+
+.user-position-section {
+    padding-bottom: 30px;
+}
+
+.user-position-card {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+.position-details h3 {
+    font-size: 1.6em; /* Kích thước tiêu đề chức vụ - ĐÃ GIẢM XUỐNG CÒN 1.6em */
+    font-weight: 700;
+    color: #455a64;
+    margin-bottom: 10px;
+}
+
+.position-details p {
+    color: #78909c;
+    font-size: 1.1em;
+}
+
+
+/*  ---  CSS CHO SECTION BẢNG ĐƠN XIN PHÉP  ---  */
+
+.application-table-section {
+    padding-bottom: 50px;
+}
+
+.application-table-section h2 {
+    font-size: 2.2em;
+    font-weight: 700;
+    color: #37474f;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.application-table {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.application-table thead {
+    background-color: #e0e0e0;
+    color: #555;
+    font-weight: bold;
+}
+
+.application-table th,
+.application-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left;
+    word-break: break-word;
+}
+
+.application-table th:last-child,
+.application-table td:last-child {
+    text-align: center;
+    width: 140px;
+    white-space: nowrap;
+}
+
+.application-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.application-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.application-table tbody td a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 8px;
+    background-color: #f0f7ff;
+}
+
+.application-table tbody td a:hover {
+    color: #fff;
+    text-decoration: none;
+    background-color: #3498db;
+}
+
+
+/*  ---  CSS CHO FOOTER DASHBOARD  ---  */
+.footer-home {
+    text-align: center;
+    padding: 20px;
+    background-color: #e0e0e0;
+    color: #777;
+    border-top: 1px solid #ccc;
+    margin-top: 50px;
+    font-size: 0.9em;
+}
