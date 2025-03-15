@@ -48,7 +48,7 @@
                         <i class="fas fa-user-circle fa-5x"></i>
                     </div>
                     <div class="user-details">
-                        <h3>Xin Chào, Nguyễn Văn A</h3> <//-- **THAY THẾ BẰNG TÊN NGƯỜI DÙNG ĐĂNG NHẬP TỪ SERVER-SIDE** -->
+                        <h3>Xin Chào, ${fullName}</h3> <//-- **THAY THẾ BẰNG TÊN NGƯỜI DÙNG ĐĂNG NHẬP TỪ SERVER-SIDE** -->
                         <p>Chào mừng bạn đến với Helios - Ứng dụng Quản lý Nghỉ Phép</p>
                     </div>
                 </div>
@@ -59,9 +59,9 @@
             <div class="container">
                 <div class="user-position-card">
                     <div class="position-details">
-                        <h3>Chức Vụ: Nhân Viên IT</h3> <//-- **THAY THẾ BẰNG CHỨC VỤ NGƯỜI DÙNG TỪ SERVER-SIDE** -->
-                        <p>Phòng ban: Công Nghệ Thông Tin</p> <//-- **THAY THẾ BẰNG PHÒNG BAN NGƯỜI DÙNG TỪ SERVER-SIDE** -->
-                        <p>Bộ phận: Bộ phận Phát Triển Phần Mềm</p> <//-- **THAY THẾ BẰNG BỘ PHẬN NGƯỜI DÙNG TỪ SERVER-SIDE** -->
+                        <h3>Chức Vụ: ${role}</h3> <//-- **THAY THẾ BẰNG CHỨC VỤ NGƯỜI DÙNG TỪ SERVER-SIDE** -->
+                        <p>Phòng ban: ${department}</p> <//-- **THAY THẾ BẰNG PHÒNG BAN NGƯỜI DÙNG TỪ SERVER-SIDE** -->
+                        <p>Bộ phận: ${section}</p> <//-- **THAY THẾ BẰNG BỘ PHẬN NGƯỜI DÙNG TỪ SERVER-SIDE** -->
                     </div>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                 </table>
             </div>
         </section>
-         <//-- CÓ THỂ CHÈN THÊM CÁC SECTION NỘI DUNG KHÁC CỦA TRANG CHỦ VÀO ĐÂY (ví dụ: thống kê, biểu đồ...) -->
+          <//-- CÓ THỂ CHÈN THÊM CÁC SECTION NỘI DUNG KHÁC CỦA TRANG CHỦ VÀO ĐÂY (ví dụ: thống kê, biểu đồ...) -->
     </main>
 
     <footer class="footer-home">

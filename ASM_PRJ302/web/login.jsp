@@ -14,21 +14,28 @@
         <div class="login-container login-container-visual"> <//-- Class login-container-visual cho container hình ảnh -->
             <div class="login-header">
                 <div class="logo logo-visual">Selene</div> <//-- Logo "Selene" với class logo-visual -->
-                <h2 class="header-visual">Wellcome back</h2> <//-- Tiêu đề chào mừng với class header-visual -->
+                <h2 class="header-visual">Chào mừng trở lại</h2> <//-- Tiêu đề chào mừng với class header-visual -->
             </div>
+
+            <% if (request.getAttribute("loginError") != null) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%= request.getAttribute("loginError") %>
+                </div>
+            <% } %>
+
             <form action="LoginServlet" method="post" class="login-form login-form-visual"> <//-- Form đăng nhập với class login-form-visual -->
                 <div class="form-group form-group-visual"> <//-- Form group với class form-group-visual -->
-                    <label for="username" class="label-visual">Username</label> <//-- Label "Tài khoản" với class label-visual -->
+                    <label for="username" class="label-visual">Tài khoản</label> <//-- Label "Tài khoản" với class label-visual -->
                     <div class="input-group input-group-visual"> <//-- Input group với class input-group-visual -->
                         <span class="input-group-icon input-group-icon-visual"><i class="fas fa-envelope"></i></span> <//-- Icon email (Font Awesome) với class icon-visual -->
-                        <input type="text" class="form-control form-control-visual" id="username" name="username" placeholder="Enter your username" required> <//-- Input tài khoản, placeholder và class control-visual -->
+                        <input type="text" class="form-control form-control-visual" id="username" name="username" placeholder="Nhập tài khoản của bạn" required> <//-- Input tài khoản, placeholder và class control-visual -->
                     </div>
                 </div>
                 <div class="form-group form-group-visual"> <//-- Form group với class form-group-visual -->
-                    <label for="password" class="label-visual">Password</label> <//-- Label "Mật Khẩu" với class label-visual -->
+                    <label for="password" class="label-visual">Mật khẩu</label> <//-- Label "Mật Khẩu" với class label-visual -->
                     <div class="input-group input-group-visual"> <//-- Input group với class input-group-visual -->
                         <span class="input-group-icon input-group-icon-visual"><i class="fas fa-key"></i></span> <//-- Icon khóa (Font Awesome) với class icon-visual -->
-                        <input type="password" class="form-control form-control-visual" id="password" name="password" placeholder="Enter your password" required> <//-- Input mật khẩu, placeholder và class control-visual -->
+                        <input type="password" class="form-control form-control-visual" id="password" name="password" placeholder="Nhập mật khẩu của bạn" required> <//-- Input mật khẩu, placeholder và class control-visual -->
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block sign-in-button sign-in-button-visual">Đăng Nhập</button> <//-- Nút "Đăng Nhập" với class button-visual -->

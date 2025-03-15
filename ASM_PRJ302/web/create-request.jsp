@@ -7,6 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/home-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <style>
+        .datepicker {
+            z-index: 1151 !important; /* Để datepicker không bị che bởi các phần tử khác */
+        }
+    </style>
 </head>
 <body class="body-home body-home-dashboard">
     <header class="header-home">
@@ -44,15 +50,57 @@
         <section class="function-page-section">
             <div class="container">
                 <h2>Chức năng: Tạo Đơn Xin Phép</h2>
-                <p>Đây là giao diện cho chức năng **Tạo Đơn Xin Phép**.</p>
-                </div>
+                <<form action="SubmitRequestServlet" method="post"> <//-- Form gửi dữ liệu đến trang xử lý (chúng ta sẽ tạo sau) -->
+                    <div class="mb-3">
+                        <label for="leaveType" class="form-label">Loại Nghỉ Phép:</label>
+                        <select class="form-select" id="leaveType" name="leaveType" required>
+                            <option value="">-- Chọn loại nghỉ --</option>
+                            <option value="annual">Nghỉ Phép Năm</option>
+                            <option value="sick">Nghỉ Ốm</option>
+                            <option value="personal">Nghỉ Việc Riêng</option>
+                            <option value="maternity">Nghỉ Thai Sản</option>
+                            <option value="other">Khác</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="startDate" class="form-label">Ngày Bắt Đầu:</label>
+                        <input type="text" class="form-control datepicker" id="startDate" name="startDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="endDate" class="form-label">Ngày Kết Thúc:</label>
+                        <input type="text" class="form-control datepicker" id="endDate" name="endDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Lý Do Nghỉ Phép:</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="attachment" class="form-label">Tệp Đính Kèm (nếu có):</label>
+                        <input type="file" class="form-control" id="attachment" name="attachment">
+                        <small class="form-text text-muted">Chỉ chấp nhận các định dạng: PDF, JPG, PNG.</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Gửi Đơn Xin Phép</button>
+                </form>
+            </div>
         </section>
     </main>
 
     <footer class="footer-home">
-        <p>&copy; 2024 Helios. All rights reserved.</p>
+        <p>&copy; 2025 Helios. All rights reserved.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.vi.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.datepicker').datepicker({
+                format: 'dd/mm/yyyy',
+                language: 'vi',
+                autoclose: true
+            });
+        });
+    </script>
 </body>
 </html>
