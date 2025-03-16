@@ -1,3 +1,5 @@
+package controller;
+
 import dal.DatabaseConnection; // Nếu bạn để DatabaseConnection trong package dal
 // import DatabaseConnection; // Nếu bạn để DatabaseConnection ở default package
 import jakarta.servlet.ServletException;

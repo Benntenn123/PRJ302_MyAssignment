@@ -1,16 +1,17 @@
+package controller;
 
-import java.io.IOException;
+import dal.DatabaseConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import dal.DatabaseConnection; // Import from the dal package
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
@@ -38,45 +39,31 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("userId", resultSet.getInt("UserID"));
                 session.setAttribute("fullName", resultSet.getString("FullName"));
                 session.setAttribute("role", resultSet.getString("Role"));
-                session.setAttribute("department", resultSet.getString("Department")); // Thêm dòng này
-                session.setAttribute("section", resultSet.getString("Section"));   // Thêm dòng này
+                session.setAttribute("department", resultSet.getString("Department"));
+                session.setAttribute("section", resultSet.getString("Section"));
                 response.sendRedirect("home.jsp");
             } else {
                 request.setAttribute("loginError", "Tên đăng nhập hoặc mật khẩu không đúng.");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
-            request.setAttribute("loginError", "Đã có lỗi xảy ra khi kết nối đến database.");
+            request.setAttribute("loginError", "Lỗi kết nối database: " + e.getMessage());
             request.getRequestDispatcher("login.jsp").forward(request, response);
         } finally {
             DatabaseConnection.closeConnection(connection);
-            try {
-                if (preparedStatement != null) {
-                    preparedStatement.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            try { if (preparedStatement != null) preparedStatement.close(); } catch (SQLException e) { /* Đã xử lý trong closeConnection */ }
+            try { if (resultSet != null) resultSet.close(); } catch (SQLException e) { /* Đã xử lý trong closeConnection */ }
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendRedirect("login.jsp"); // Redirect GET requests to login page
-    }
-
-    @Override
-    public String getServletInfo() {
-        return "Servlet xử lý đăng nhập bằng database";
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute("userId") != null) {
+            response.sendRedirect("home.jsp");
+        } else {
+            response.sendRedirect("login.jsp");
+        }
     }
 }

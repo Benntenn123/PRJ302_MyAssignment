@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,12 +9,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <style>
-        .datepicker {
-            z-index: 1151 !important; /* Để datepicker không bị che bởi các phần tử khác */
-        }
+        .datepicker { z-index: 1151 !important; }
     </style>
 </head>
 <body class="body-home body-home-dashboard">
+    <% if (session.getAttribute("userId") == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    } %>
     <header class="header-home">
         <nav class="navbar navbar-expand-lg navbar-light bg-light home-navbar">
             <div class="container-fluid">
@@ -50,7 +52,10 @@
         <section class="function-page-section">
             <div class="container">
                 <h2>Chức năng: Tạo Đơn Xin Phép</h2>
-                <<form action="SubmitRequestServlet" method="post"> <//-- Form gửi dữ liệu đến trang xử lý (chúng ta sẽ tạo sau) -->
+                <% if (request.getAttribute("error") != null) { %>
+                    <div class="alert alert-danger" role="alert"><%= request.getAttribute("error") %></div>
+                <% } %>
+                <form action="SubmitRequestServlet" method="post">
                     <div class="mb-3">
                         <label for="leaveType" class="form-label">Loại Nghỉ Phép:</label>
                         <select class="form-select" id="leaveType" name="leaveType" required>
@@ -64,20 +69,15 @@
                     </div>
                     <div class="mb-3">
                         <label for="startDate" class="form-label">Ngày Bắt Đầu:</label>
-                        <input type="text" class="form-control datepicker" id="startDate" name="startDate" required>
+                        <input type="text" class="form-control datepicker" id="startDate" name="startDate" required pattern="\d{2}/\d{2}/\d{4}" title="Định dạng dd/mm/yyyy">
                     </div>
                     <div class="mb-3">
                         <label for="endDate" class="form-label">Ngày Kết Thúc:</label>
-                        <input type="text" class="form-control datepicker" id="endDate" name="endDate" required>
+                        <input type="text" class="form-control datepicker" id="endDate" name="endDate" required pattern="\d{2}/\d{2}/\d{4}" title="Định dạng dd/mm/yyyy">
                     </div>
                     <div class="mb-3">
                         <label for="reason" class="form-label">Lý Do Nghỉ Phép:</label>
                         <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="attachment" class="form-label">Tệp Đính Kèm (nếu có):</label>
-                        <input type="file" class="form-control" id="attachment" name="attachment">
-                        <small class="form-text text-muted">Chỉ chấp nhận các định dạng: PDF, JPG, PNG.</small>
                     </div>
                     <button type="submit" class="btn btn-primary">Gửi Đơn Xin Phép</button>
                 </form>
@@ -86,7 +86,7 @@
     </main>
 
     <footer class="footer-home">
-        <p>&copy; 2025 Helios. All rights reserved.</p>
+        <p>© 2025 Helios. All rights reserved.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -98,7 +98,15 @@
             $('.datepicker').datepicker({
                 format: 'dd/mm/yyyy',
                 language: 'vi',
-                autoclose: true
+                autoclose: true,
+                startDate: new Date()
+            }).on('changeDate', function(e) {
+                var startDate = $('#startDate').datepicker('getDate');
+                var endDate = $('#endDate').datepicker('getDate');
+                if (endDate && startDate && endDate < startDate) {
+                    alert('Ngày kết thúc phải sau ngày bắt đầu!');
+                    $(this).val('');
+                }
             });
         });
     </script>

@@ -1,7 +1,6 @@
 package controller;
 
-import dal.DatabaseConnection; // Nếu bạn để DatabaseConnection trong package dal
-// import DatabaseConnection; // Nếu bạn để DatabaseConnection ở default package
+import dal.DatabaseConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,63 +21,61 @@ public class SubmitRequestServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect("login.jsp"); // Chuyển hướng nếu chưa đăng nhập
+            response.sendRedirect("login.jsp");
             return;
         }
 
         int userId = (int) session.getAttribute("userId");
-        String leaveType = request.getParameter("leaveType"); // Lấy loại nghỉ phép
+        String leaveType = request.getParameter("leaveType");
         String startDateStr = request.getParameter("startDate");
         String endDateStr = request.getParameter("endDate");
         String reason = request.getParameter("reason");
-        // String attachment = request.getParameter("attachment"); // Bạn sẽ cần xử lý file upload khác
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); // Định dạng ngày tháng trong form của bạn
-        Date startDate = null;
-        Date endDate = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date startDate = null, endDate = null;
 
         try {
             startDate = new Date(sdf.parse(startDateStr).getTime());
             endDate = new Date(sdf.parse(endDateStr).getTime());
+            if (!sdf.parse(startDateStr).before(sdf.parse(endDateStr))) {
+                throw new ParseException("Ngày kết thúc phải sau ngày bắt đầu.", 0);
+            }
         } catch (ParseException e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Định dạng ngày không hợp lệ (dd/mm/yyyy).");
+            request.setAttribute("error", "Định dạng ngày không hợp lệ (dd/mm/yyyy) hoặc ngày không hợp lệ: " + e.getMessage());
             request.getRequestDispatcher("create-request.jsp").forward(request, response);
             return;
         }
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "INSERT INTO LeaveRequests (UserID, StartDate, EndDate, Reason) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO LeaveRequests (UserID, LeaveType, StartDate, EndDate, Reason) VALUES (?, ?, ?, ?, ?)";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, userId);
-            preparedStatement.setDate(2, startDate);
-            preparedStatement.setDate(3, endDate);
-            preparedStatement.setString(4, reason);
+            preparedStatement.setString(2, leaveType);
+            preparedStatement.setDate(3, startDate);
+            preparedStatement.setDate(4, endDate);
+            preparedStatement.setString(5, reason);
             int rowsAffected = preparedStatement.executeUpdate();
 
             if (rowsAffected > 0) {
-                response.sendRedirect("home.jsp"); // Chuyển hướng về trang chủ sau khi gửi thành công
+                response.sendRedirect("home.jsp");
             } else {
                 request.setAttribute("error", "Có lỗi xảy ra khi gửi đơn xin phép.");
                 request.getRequestDispatcher("create-request.jsp").forward(request, response);
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
             request.setAttribute("error", "Lỗi kết nối database: " + e.getMessage());
             request.getRequestDispatcher("create-request.jsp").forward(request, response);
         } finally {
             DatabaseConnection.closeConnection(connection);
-            try { if (preparedStatement != null) preparedStatement.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { if (preparedStatement != null) preparedStatement.close(); } catch (SQLException e) { /* Đã xử lý trong closeConnection */ }
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.sendRedirect("create-request.jsp"); // Nếu người dùng truy cập trực tiếp bằng GET
+        response.sendRedirect("create-request.jsp");
     }
 }
