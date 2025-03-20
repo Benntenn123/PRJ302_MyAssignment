@@ -8,27 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/home-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* CSS nội tuyến để kiểm tra nhanh */
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .home-main {
-            flex: 1 0 auto; /* Cho phép main co giãn và đẩy footer xuống */
-        }
-        .footer-home {
-            flex-shrink: 0; /* Ngăn footer co lại */
-        }
-    </style>
 </head>
 <body class="body-home body-home-dashboard">
-    <% if (session.getAttribute("userId") == null) {
-        response.sendRedirect("login.jsp");
-        return;
-    } %>
+    <c:if test="${empty sessionScope.userId}">
+        <c:redirect url="login.jsp"/>
+    </c:if>
+
     <header class="header-home">
         <nav class="navbar navbar-expand-lg navbar-light bg-light home-navbar">
             <div class="container-fluid">
@@ -52,7 +37,7 @@
                                 <li><a class="dropdown-item" href="approve-request.jsp">Duyệt Đơn Xin Phép</a></li>
                                 <li><a class="dropdown-item" href="view-requests">Xem Danh Sách Đơn Xin Phép</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="logout.jsp">Đăng Xuất</a></li>
+                                <li><a class="dropdown-item" href="logout">Đăng Xuất</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -69,7 +54,7 @@
                         <i class="fas fa-user-circle fa-5x"></i>
                     </div>
                     <div class="user-details">
-                        <h3>Xin Chào, ${fullName}</h3>
+                        <h3>Xin Chào, <c:out value="${sessionScope.fullName}"/></h3>
                         <p>Chào mừng bạn đến với Helios - Ứng dụng Quản lý Nghỉ Phép</p>
                     </div>
                 </div>
@@ -80,19 +65,19 @@
             <div class="container">
                 <div class="user-position-card">
                     <div class="position-details">
-                        <h3>Chức Vụ: ${role}</h3>
-                        <p>Phòng ban: ${department}</p>
-                        <p>Bộ phận: ${section}</p>
+                        <h3>Chức Vụ: <c:out value="${sessionScope.role}"/></h3>
+                        <p>Phòng ban: <c:out value="${sessionScope.department}"/></p>
+                        <p>Bộ phận: <c:out value="${sessionScope.section}"/></p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <% if (request.getAttribute("error") != null) { %>
+        <c:if test="${not empty error}">
             <div class="alert alert-danger" role="alert" style="margin: 20px;">
-                <%= request.getAttribute("error") %>
+                <c:out value="${error}"/>
             </div>
-        <% } %>
+        </c:if>
     </main>
 
     <footer class="footer-home">

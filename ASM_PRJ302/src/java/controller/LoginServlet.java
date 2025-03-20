@@ -16,44 +16,39 @@ import java.sql.SQLException;
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        String loginError = null;
 
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "SELECT UserID, FullName, Role, Department, Section " +
+                     "FROM Users WHERE Username = ? AND Password = ?")) {
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
 
-        try {
-            connection = DatabaseConnection.getConnection();
-            String sql = "SELECT UserID, FullName, Role, Department, Section FROM Users WHERE Username = ? AND Password = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
-            resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
+            if (rs.next()) {
                 HttpSession session = request.getSession();
-                session.setAttribute("userId", resultSet.getInt("UserID"));
-                session.setAttribute("fullName", resultSet.getString("FullName"));
-                session.setAttribute("role", resultSet.getString("Role"));
-                session.setAttribute("department", resultSet.getString("Department"));
-                session.setAttribute("section", resultSet.getString("Section"));
-                response.sendRedirect("home.jsp");
+                session.setAttribute("userId", rs.getString("UserID"));
+                session.setAttribute("fullName", rs.getString("FullName"));
+                session.setAttribute("role", rs.getString("Role"));
+                session.setAttribute("department", rs.getString("Department"));
+                session.setAttribute("section", rs.getString("Section"));
+                response.sendRedirect("home");
+                return;
             } else {
-                request.setAttribute("loginError", "Tên đăng nhập hoặc mật khẩu không đúng.");
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+                loginError = "Tài khoản hoặc mật khẩu không đúng!";
             }
         } catch (SQLException e) {
-            request.setAttribute("loginError", "Lỗi kết nối database: " + e.getMessage());
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        } finally {
-            DatabaseConnection.closeConnection(connection);
-            try { if (preparedStatement != null) preparedStatement.close(); } catch (SQLException e) { /* Đã xử lý trong closeConnection */ }
-            try { if (resultSet != null) resultSet.close(); } catch (SQLException e) { /* Đã xử lý trong closeConnection */ }
+            loginError = "Lỗi kết nối cơ sở dữ liệu: " + e.getMessage();
         }
+
+        request.setAttribute("loginError", loginError);
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
     @Override
@@ -61,9 +56,9 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("userId") != null) {
-            response.sendRedirect("home.jsp");
+            response.sendRedirect("home");
         } else {
-            response.sendRedirect("login.jsp");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
 }

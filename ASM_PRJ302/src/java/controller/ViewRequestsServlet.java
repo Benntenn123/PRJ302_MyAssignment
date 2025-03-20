@@ -1,13 +1,13 @@
 package controller;
 
 import dal.DatabaseConnection;
-import model.LeaveRequest;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.LeaveRequest;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,8 +19,6 @@ import java.util.List;
 @WebServlet(name = "ViewRequestsServlet", urlPatterns = {"/view-requests"})
 public class ViewRequestsServlet extends HttpServlet {
 
-    private static final int PAGE_SIZE = 5; // Số bản ghi trên mỗi trang
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -30,81 +28,73 @@ public class ViewRequestsServlet extends HttpServlet {
             return;
         }
 
-        // Lấy tham số lọc và phân trang
-        String statusFilter = request.getParameter("status") != null ? request.getParameter("status") : "";
-        int page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+        String userId = (String) session.getAttribute("userId");
+        List<LeaveRequest> leaveRequests = getLeaveRequestsByUserId(userId, request);
 
+        if (leaveRequests.isEmpty()) {
+            request.setAttribute("message", "Bạn không có đơn xin nghỉ nào.");
+        } else {
+            request.setAttribute("leaveRequests", leaveRequests);
+        }
+
+        request.getRequestDispatcher("view-requests.jsp").forward(request, response);
+    }
+
+    private List<LeaveRequest> getLeaveRequestsByUserId(String userId, HttpServletRequest request) {
         List<LeaveRequest> leaveRequests = new ArrayList<>();
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        int totalRecords = 0;
+        String sql = "SELECT lr.LeaveRequestID, lr.UserID, lr.LeaveType, lr.StartDate, lr.EndDate, lr.Reason, lr.Status, lr.CreatedDate, lr.ModifiedDate, u.FullName " +
+                     "FROM LeaveRequests lr " +
+                     "LEFT JOIN Users u ON lr.UserID = u.UserID " +
+                     "WHERE lr.UserID = ? " +
+                     "ORDER BY lr.CreatedDate DESC " +
+                     "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
+        int page = 1;
+        int pageSize = 10; // Số đơn trên mỗi trang
         try {
-            connection = DatabaseConnection.getConnection();
+            page = Integer.parseInt(request.getParameter("page"));
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
+        int offset = (page - 1) * pageSize;
 
-            // Đếm tổng số bản ghi để tính phân trang
-            String countSql = "SELECT COUNT(*) as total FROM LeaveRequests lr INNER JOIN Users u ON lr.UserID = u.UserID";
-            if (!statusFilter.isEmpty()) {
-                countSql += " WHERE lr.Status = ?";
-            }
-            preparedStatement = connection.prepareStatement(countSql);
-            if (!statusFilter.isEmpty()) {
-                preparedStatement.setString(1, statusFilter);
-            }
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                totalRecords = resultSet.getInt("total");
-            }
-            resultSet.close();
-            preparedStatement.close();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, userId);
+            stmt.setInt(2, offset);
+            stmt.setInt(3, pageSize);
+            ResultSet rs = stmt.executeQuery();
 
-            // Truy vấn danh sách đơn với phân trang
-            int offset = (page - 1) * PAGE_SIZE;
-            String sql = "SELECT lr.LeaveRequestID, u.FullName, lr.Status, lr.StartDate, lr.EndDate, lr.ModifiedDate " +
-                         "FROM LeaveRequests lr " +
-                         "INNER JOIN Users u ON lr.UserID = u.UserID";
-            if (!statusFilter.isEmpty()) {
-                sql += " WHERE lr.Status = ?";
-            }
-            sql += " ORDER BY lr.ModifiedDate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-            preparedStatement = connection.prepareStatement(sql);
-            int paramIndex = 1;
-            if (!statusFilter.isEmpty()) {
-                preparedStatement.setString(paramIndex++, statusFilter);
-            }
-            preparedStatement.setInt(paramIndex++, offset);
-            preparedStatement.setInt(paramIndex, PAGE_SIZE);
-            resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
+            while (rs.next()) {
                 LeaveRequest leaveRequest = new LeaveRequest();
-                leaveRequest.setId(resultSet.getInt("LeaveRequestID"));
-                leaveRequest.setFullName(resultSet.getString("FullName"));
-                leaveRequest.setStatus(resultSet.getString("Status"));
-                leaveRequest.setStartDate(resultSet.getDate("StartDate"));
-                leaveRequest.setEndDate(resultSet.getDate("EndDate"));
-                leaveRequest.setModifiedDate(resultSet.getTimestamp("ModifiedDate"));
+                leaveRequest.setId(rs.getInt("LeaveRequestID"));
+                leaveRequest.setUserId(rs.getInt("UserID")); // Đã có setUserId
+                leaveRequest.setFullName(rs.getString("FullName") != null ? rs.getString("FullName") : "Không xác định");
+                leaveRequest.setLeaveType(rs.getString("LeaveType"));
+                leaveRequest.setStartDate(rs.getDate("StartDate"));
+                leaveRequest.setEndDate(rs.getDate("EndDate"));
+                leaveRequest.setReason(rs.getString("Reason"));
+                leaveRequest.setStatus(rs.getString("Status"));
+                leaveRequest.setCreatedDate(rs.getTimestamp("CreatedDate")); // Đã có setCreatedDate
+                leaveRequest.setModifiedDate(rs.getTimestamp("ModifiedDate"));
                 leaveRequests.add(leaveRequest);
             }
 
             // Tính tổng số trang
-            int totalPages = (int) Math.ceil((double) totalRecords / PAGE_SIZE);
-
-            // Truyền dữ liệu vào request
-            request.setAttribute("leaveRequests", leaveRequests);
-            request.setAttribute("statusFilter", statusFilter);
-            request.setAttribute("currentPage", page);
-            request.setAttribute("totalPages", totalPages);
-            request.getRequestDispatcher("view-requests.jsp").forward(request, response);
-
+            String countSql = "SELECT COUNT(*) FROM LeaveRequests WHERE UserID = ?";
+            try (PreparedStatement countStmt = conn.prepareStatement(countSql)) {
+                countStmt.setString(1, userId);
+                ResultSet countRs = countStmt.executeQuery();
+                if (countRs.next()) {
+                    int totalRecords = countRs.getInt(1);
+                    int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+                    request.setAttribute("totalPages", totalPages);
+                    request.setAttribute("currentPage", page);
+                }
+            }
         } catch (SQLException e) {
-            request.setAttribute("error", "Lỗi khi tải danh sách đơn xin phép: " + e.getMessage());
-            request.getRequestDispatcher("view-requests.jsp").forward(request, response);
-        } finally {
-            DatabaseConnection.closeConnection(connection);
-            try { if (preparedStatement != null) preparedStatement.close(); } catch (SQLException e) { /* Đã xử lý */ }
-            try { if (resultSet != null) resultSet.close(); } catch (SQLException e) { /* Đã xử lý */ }
+            request.setAttribute("error", "Lỗi khi truy vấn danh sách đơn: " + e.getMessage());
         }
+        return leaveRequests;
     }
 }

@@ -1,64 +1,30 @@
-/* Đảm bảo navbar không che nội dung */
-.header-home {
-    position: relative; /* Hoặc giữ nguyên nếu bạn dùng fixed/sticky */
-    z-index: 1000; /* Đảm bảo navbar luôn ở trên cùng */
-    width: 100%;
+/* home-style.css */
+.application-table-section {
+    padding: 20px 0;
 }
-
-/* Sử dụng padding-top động để tránh bị che */
-.home-main {
-    padding-top: 80px; /* Tăng giá trị để bù chiều cao navbar, có thể điều chỉnh */
-    padding-bottom: 20px;
-    min-height: calc(100vh - 80px); /* Đảm bảo nội dung lấp đầy trang trừ navbar và footer */
+.table {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-/* Điều chỉnh section thông tin người dùng */
-.user-info-section, .user-position-section {
-    margin-bottom: 20px;
+.btn-primary {
+    background-color: #f4a261;
+    border-color: #f4a261;
 }
-
-.user-info-card, .user-position-card {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    text-align: center;
-    margin-top: 100px;
+.btn-primary:hover {
+    background-color: #e07a5f;
+    border-color: #e07a5f;
 }
-
-.user-avatar i {
-    font-size: 60px;
-    color: #6c757d;
+.pagination {
+    margin-top: 20px;
 }
-
-.user-details h3 {
-    margin: 10px 0;
-    color: #343a40;
+.page-item.active .page-link {
+    background-color: #f4a261;
+    border-color: #f4a261;
 }
-
-.user-details p {
-    color: #6c757d;
-    margin: 5px 0;
+.page-link {
+    color: #f4a261;
 }
-
-.position-details h3, .position-details p {
-    margin: 5px 0;
-    color: #6c757d;
-}
-
-/* Đảm bảo footer không bị chồng lấn */
-.footer-home {
-    text-align: center;
-    padding: 10px 0;
-    background: #f8f9fa;
-    width: 100%;
-    margin-top: auto; /* Đẩy footer xuống dưới cùng */
-}
-
-/* Kiểm tra và ghi đè CSS của Bootstrap nếu cần */
-.navbar {
-    position: fixed; /* Nếu navbar là fixed, cần padding-top ở main */
-    top: 0;
-    left: 0;
-    right: 0;
+.page-link:hover {
+    color: #e07a5f;
 }
