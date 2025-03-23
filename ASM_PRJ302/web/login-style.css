@@ -1,6 +1,6 @@
-/* ... (Các CSS khác có thể giữ nguyên hoặc tùy chỉnh lại) ... */
+/* ... (Other CSS can remain unchanged or be customized as needed) ... */
 
-/* CSS cho trang Login - Form chữ nổi bật hơn */
+/* CSS for Login Page - Form text stands out more */
 
 .body-login {
     background-color: #f8f9fa;
@@ -8,7 +8,7 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    font-family: 'Nunito Sans', sans-serif; /* CHỌN FONT CHỮ NỔI BẬT HƠN CHO TOÀN BODY - Nunito Sans */
+    font-family: 'Nunito Sans', sans-serif; /* CHOOSE A MORE PROMINENT FONT FOR THE ENTIRE BODY - Nunito Sans */
 }
 
 .login-container {
@@ -25,19 +25,19 @@
 }
 
 .logo {
-    font-size: 2.8em; /* Tăng kích thước logo lớn hơn */
-    font-weight: 800; /* Tăng độ đậm logo rõ rệt */
+    font-size: 2.8em; /* Increase logo size */
+    font-weight: 800; /* Increase logo boldness for clarity */
     color: #F2C641;
     margin-bottom: 10px;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ chữ logo nhẹ */
-    font-family: 'Montserrat', sans-serif; /* ĐỔI FONT LOGO SANG MONTESSAT - Font chữ đậm và hiện đại */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); /* Add a subtle text shadow to the logo */
+    font-family: 'Montserrat', sans-serif; /* CHANGE LOGO FONT TO MONTSERRAT - Bold and modern font */
 }
 
 .login-header h2 {
-    font-size: 1.6em; /* Tăng kích thước tiêu đề header lớn hơn */
+    font-size: 1.6em; /* Increase header title size */
     color: #555;
-    font-weight: 600; /* Tăng độ đậm tiêu đề header */
-    font-family: 'Nunito Sans', sans-serif; /* ĐỒNG BỘ FONT HEADER VỚI BODY */
+    font-weight: 600; /* Increase header title boldness */
+    font-family: 'Nunito Sans', sans-serif; /* SYNC HEADER FONT WITH BODY */
 }
 
 .login-form .form-group {
@@ -48,9 +48,9 @@
     display: block;
     margin-bottom: 8px;
     color: #777;
-    font-weight: 600; /* Tăng độ đậm label */
-    font-family: 'Nunito Sans', sans-serif; /* ĐỒNG BỘ FONT LABEL VỚI BODY */
-    font-size: 1.1em; /* Tăng kích thước label lớn hơn */
+    font-weight: 600; /* Increase label boldness */
+    font-family: 'Nunito Sans', sans-serif; /* SYNC LABEL FONT WITH BODY */
+    font-size: 1.1em; /* Increase label size */
 }
 
 .input-group {
@@ -71,8 +71,8 @@
     border-radius: 8px;
     box-shadow: none;
     height: 50px;
-    font-size: 1.1em; /* Tăng kích thước input lớn hơn */
-    font-family: 'Nunito Sans', sans-serif; /* ĐỒNG BỘ FONT INPUT VỚI BODY */
+    font-size: 1.1em; /* Increase input size */
+    font-family: 'Nunito Sans', sans-serif; /* SYNC INPUT FONT WITH BODY */
 }
 
 .login-form .form-control:focus {
@@ -85,13 +85,13 @@
     background-color: #2ecc71;
     border: none;
     border-radius: 8px;
-    padding: 14px 20px; /* Tăng padding nút */
-    font-size: 1.3em; /* Tăng kích thước nút lớn hơn */
-    font-weight: 700; /* Tăng độ đậm nút rõ rệt */
+    padding: 14px 20px; /* Increase button padding */
+    font-size: 1.3em; /* Increase button size */
+    font-weight: 700; /* Increase button boldness for clarity */
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    font-family: 'Montserrat', sans-serif; /* ĐỔI FONT NÚT SANG MONTESSAT - Font chữ đậm và hiện đại, giống LOGO */
+    font-family: 'Montserrat', sans-serif; /* CHANGE BUTTON FONT TO MONTSERRAT - Bold and modern font, matching LOGO */
 }
 
 .sign-in-button:hover {
@@ -103,14 +103,14 @@
     justify-content: space-between;
     margin-top: 20px;
     color: #999;
-    font-size: 1em; /* Tăng kích thước footer lớn hơn */
-    font-family: 'Nunito Sans', sans-serif; /* ĐỒNG BỘ FONT FOOTER VỚI BODY */
+    font-size: 1em; /* Increase footer size */
+    font-family: 'Nunito Sans', sans-serif; /* SYNC FOOTER FONT WITH BODY */
 }
 
 .login-footer div {
     cursor: pointer;
     transition: color 0.3s ease;
-    font-weight: 500; /* Tăng độ đậm link footer */
+    font-weight: 500; /* Increase footer link boldness */
 }
 
 .login-footer div:hover {

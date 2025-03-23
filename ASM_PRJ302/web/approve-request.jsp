@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Duyệt Đơn Xin Phép - Helios</title>
+    <title>Approve Leave Request - Helios</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/home-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -64,8 +64,8 @@
 
             <!-- Approve Request Section -->
             <section class="function-page-section">
-                <h2>Chức năng: Duyệt Đơn Xin Phép</h2>
-                <p>Đây là giao diện cho chức năng <strong>Duyệt Đơn Xin Phép</strong>.</p>
+                <h2>Function: Approve Leave Request</h2>
+                <p>This is the interface for the <strong>Approve Leave Request</strong> function.</p>
             </section>
         </div>
     </div>

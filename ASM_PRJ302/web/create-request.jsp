@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Tạo Đơn Xin Phép - Helios</title>
+    <title>Create Leave Request - Helios</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/home-style.css">
@@ -64,7 +64,7 @@
 
             <!-- Create Request Form -->
             <section class="function-page-section">
-                <h2>Tạo Đơn Xin Phép</h2>
+                <h2>Create Leave Request</h2>
                 <%
                     String error = (String) request.getAttribute("error");
                     if (error != null) {
@@ -77,28 +77,28 @@
                 %>
                 <form action="${pageContext.request.contextPath}/submit-request" method="post">
                     <div class="mb-3">
-                        <label for="leaveType" class="form-label">Loại Nghỉ</label>
+                        <label for="leaveType" class="form-label">Leave Type</label>
                         <select class="form-select" id="leaveType" name="leaveType" required>
-                            <option value="">Chọn loại nghỉ</option>
-                            <option value="Nghỉ phép">Nghỉ phép</option>
-                            <option value="Nghỉ ốm">Nghỉ ốm</option>
-                            <option value="Nghỉ không lương">Nghỉ không lương</option>
+                            <option value="">Select leave type</option>
+                            <option value="Annual Leave">Annual Leave</option>
+                            <option value="Sick Leave">Sick Leave</option>
+                            <option value="Unpaid Leave">Unpaid Leave</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="startDate" class="form-label">Ngày Bắt Đầu</label>
+                        <label for="startDate" class="form-label">Start Date</label>
                         <input type="date" class="form-control" id="startDate" name="startDate" required>
                     </div>
                     <div class="mb-3">
-                        <label for="endDate" class="form-label">Ngày Kết Thúc</label>
+                        <label for="endDate" class="form-label">End Date</label>
                         <input type="date" class="form-control" id="endDate" name="endDate" required>
                     </div>
                     <div class="mb-3">
-                        <label for="reason" class="form-label">Lý Do</label>
+                        <label for="reason" class="form-label">Reason</label>
                         <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Gửi Đơn</button>
-                    <a href="home" class="btn btn-secondary">Hủy</a>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                    <a href="home" class="btn btn-secondary">Cancel</a>
                 </form>
             </section>
         </div>
@@ -132,7 +132,7 @@
             const endDate = new Date(document.getElementById('endDate').value);
             if (startDate > endDate) {
                 e.preventDefault();
-                alert('Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.');
+                alert('Start date must be less than or equal to end date.');
             }
         });
     </script>

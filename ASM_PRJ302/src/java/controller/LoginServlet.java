@@ -38,16 +38,16 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("userId", rs.getString("UserID"));
                 session.setAttribute("fullName", rs.getString("FullName"));
-                session.setAttribute("role", rs.getString("RoleName") != null ? rs.getString("RoleName") : "Không xác định");
+                session.setAttribute("role", rs.getString("RoleName") != null ? rs.getString("RoleName") : "Unknown");
                 session.setAttribute("department", rs.getString("Department"));
                 session.setAttribute("section", rs.getString("Section"));
                 response.sendRedirect("home");
                 return;
             } else {
-                loginError = "Tài khoản hoặc mật khẩu không đúng!";
+                loginError = "Incorrect username or password!";
             }
         } catch (SQLException e) {
-            loginError = "Lỗi kết nối cơ sở dữ liệu: " + e.getMessage();
+            loginError = "Database connection error: " + e.getMessage();
         }
 
         request.setAttribute("loginError", loginError);

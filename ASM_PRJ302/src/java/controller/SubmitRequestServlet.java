@@ -25,38 +25,38 @@ public class SubmitRequestServlet extends HttpServlet {
             return;
         }
 
-        // Lấy thông tin từ form
+        // Retrieve form data
         String userIdStr = (String) session.getAttribute("userId");
         String leaveType = request.getParameter("leaveType");
         String startDateStr = request.getParameter("startDate");
         String endDateStr = request.getParameter("endDate");
         String reason = request.getParameter("reason");
 
-        // Chuyển đổi userId từ String sang int
+        // Convert userId from String to int
         int userId;
         try {
             userId = Integer.parseInt(userIdStr);
         } catch (NumberFormatException e) {
-            request.setAttribute("error", "ID người dùng không hợp lệ.");
+            request.setAttribute("error", "Invalid user ID.");
             request.getRequestDispatcher("create-request.jsp").forward(request, response);
             return;
         }
 
-        // Kiểm tra các tham số
+        // Validate parameters
         if (leaveType == null || leaveType.isEmpty() ||
             startDateStr == null || startDateStr.isEmpty() ||
             endDateStr == null || endDateStr.isEmpty() ||
             reason == null || reason.isEmpty()) {
-            request.setAttribute("error", "Vui lòng điền đầy đủ thông tin.");
+            request.setAttribute("error", "Please fill in all required fields.");
             request.getRequestDispatcher("create-request.jsp").forward(request, response);
             return;
         }
 
-        // Chèn dữ liệu vào cơ sở dữ liệu
+        // Insert data into the database
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "INSERT INTO LeaveRequests (UserID, LeaveType, StartDate, EndDate, Reason, Status, CreatedDate, ModifiedDate) " +
-                     "VALUES (?, ?, ?, ?, ?, 'Chờ duyệt', GETDATE(), GETDATE())")) {
+                     "VALUES (?, ?, ?, ?, ?, 'Pending', GETDATE(), GETDATE())")) {
             stmt.setInt(1, userId);
             stmt.setString(2, leaveType);
             stmt.setDate(3, Date.valueOf(startDateStr));
@@ -66,10 +66,10 @@ public class SubmitRequestServlet extends HttpServlet {
 
             response.sendRedirect("view-requests");
         } catch (SQLException e) {
-            request.setAttribute("error", "Lỗi khi gửi đơn: " + e.getMessage());
+            request.setAttribute("error", "Error submitting request: " + e.getMessage());
             request.getRequestDispatcher("create-request.jsp").forward(request, response);
         } catch (IllegalArgumentException e) {
-            request.setAttribute("error", "Ngày không hợp lệ: " + e.getMessage());
+            request.setAttribute("error", "Invalid date: " + e.getMessage());
             request.getRequestDispatcher("create-request.jsp").forward(request, response);
         }
     }

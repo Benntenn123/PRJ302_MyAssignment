@@ -14,63 +14,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
-@WebServlet(name = "ViewDetailServlet", urlPatterns = {"/view-detail"})
-public class ViewDetailServlet extends HttpServlet {
+@WebServlet(name = "EditRequestServlet", urlPatterns = {"/edit-request"})
+public class EditRequestServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        String requestIdStr = request.getParameter("id");
-        if (requestIdStr == null) {
-            request.setAttribute("error", "Request ID is missing.");
-            request.getRequestDispatcher("view-detail.jsp").forward(request, response);
-            return;
-        }
-
-        int requestId;
-        try {
-            requestId = Integer.parseInt(requestIdStr);
-        } catch (NumberFormatException e) {
-            request.setAttribute("error", "Invalid request ID.");
-            request.getRequestDispatcher("view-detail.jsp").forward(request, response);
-            return;
-        }
-
-        // Lấy thông tin chi tiết của yêu cầu
-        LeaveRequest leaveRequest = getLeaveRequestById(requestId);
-        if (leaveRequest == null) {
-            request.setAttribute("error", "Leave request not found.");
-            request.getRequestDispatcher("view-detail.jsp").forward(request, response);
-            return;
-        }
-
-        // Đặt leaveRequest vào request attribute
-        request.setAttribute("leaveRequest", leaveRequest);
-
-        // Kiểm tra nếu người dùng muốn chỉnh sửa (action=edit)
-        String action = request.getParameter("action");
-        if (action != null && action.equals("edit")) {
-            if (!"Pending".equals(leaveRequest.getStatus())) {
-                request.setAttribute("error", "Only requests in Pending status can be edited.");
-            } else {
-                request.setAttribute("action", "edit");
-            }
-        }
-
-        // Sửa tên file từ "view-Detail.jsp" thành "view-detail.jsp"
-        request.getRequestDispatcher("view-detail.jsp").forward(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        // Kiểm tra session
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
             response.sendRedirect("login.jsp");
@@ -83,20 +36,69 @@ public class ViewDetailServlet extends HttpServlet {
         try {
             userId = Integer.parseInt(userIdStr);
         } catch (NumberFormatException e) {
-            request.setAttribute("error", "Invalid user ID in session: " + userIdStr);
-            request.getRequestDispatcher("view-detail.jsp").forward(request, response);
+            request.setAttribute("error", "Invalid user ID in session.");
+            request.getRequestDispatcher("edit-request.jsp").forward(request, response);
+            return;
+        }
+
+        // Lấy danh sách các yêu cầu "Pending"
+        List<LeaveRequest> pendingRequests = getPendingLeaveRequests(userId);
+        if (pendingRequests.isEmpty()) {
+            request.setAttribute("message", "You have no requests in Pending status to edit.");
+        } else {
+            request.setAttribute("pendingRequests", pendingRequests);
+        }
+
+        // Kiểm tra nếu người dùng chọn một yêu cầu để chỉnh sửa
+        String action = request.getParameter("action");
+        String requestId = request.getParameter("id");
+        if (action != null && action.equals("edit") && requestId != null) {
+            try {
+                LeaveRequest leaveRequest = getLeaveRequestById(Integer.parseInt(requestId), userId);
+                if (leaveRequest != null && "Pending".equals(leaveRequest.getStatus())) {
+                    request.setAttribute("leaveRequest", leaveRequest);
+                } else {
+                    request.setAttribute("error", "Request does not exist or cannot be edited.");
+                }
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Invalid request ID.");
+            }
+        }
+
+        // Chuyển hướng đến trang edit-request.jsp
+        request.getRequestDispatcher("edit-request.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Kiểm tra session
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        // Chuyển userId từ String sang int
+        String userIdStr = (String) session.getAttribute("userId");
+        int userId;
+        try {
+            userId = Integer.parseInt(userIdStr);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Invalid user ID in session.");
+            doGet(request, response);
             return;
         }
 
         // Lấy dữ liệu từ form
-        String requestIdStr = request.getParameter("id");
+        String requestId = request.getParameter("id");
         String leaveType = request.getParameter("leaveType");
         String startDateStr = request.getParameter("startDate");
         String endDateStr = request.getParameter("endDate");
         String reason = request.getParameter("reason");
 
         // Kiểm tra dữ liệu đầu vào
-        if (requestIdStr == null || leaveType == null || leaveType.isEmpty() ||
+        if (requestId == null || leaveType == null || leaveType.isEmpty() ||
             startDateStr == null || startDateStr.isEmpty() ||
             endDateStr == null || endDateStr.isEmpty() ||
             reason == null || reason.isEmpty()) {
@@ -105,17 +107,8 @@ public class ViewDetailServlet extends HttpServlet {
             return;
         }
 
-        int requestId;
-        try {
-            requestId = Integer.parseInt(requestIdStr);
-        } catch (NumberFormatException e) {
-            request.setAttribute("error", "Invalid request ID: " + requestIdStr);
-            doGet(request, response);
-            return;
-        }
-
         // Kiểm tra trạng thái của yêu cầu
-        LeaveRequest leaveRequest = getLeaveRequestById(requestId);
+        LeaveRequest leaveRequest = getLeaveRequestById(Integer.parseInt(requestId), userId);
         if (leaveRequest == null || !"Pending".equals(leaveRequest.getStatus())) {
             request.setAttribute("error", "Request does not exist or cannot be edited.");
             doGet(request, response);
@@ -131,13 +124,13 @@ public class ViewDetailServlet extends HttpServlet {
             stmt.setDate(2, Date.valueOf(startDateStr));
             stmt.setDate(3, Date.valueOf(endDateStr));
             stmt.setString(4, reason);
-            stmt.setInt(5, requestId);
+            stmt.setInt(5, Integer.parseInt(requestId));
             stmt.setInt(6, userId);
 
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated > 0) {
                 request.setAttribute("message", "Leave request updated successfully!");
-                doGet(request, response); // Tải lại trang để hiển thị thông tin đã cập nhật
+                doGet(request, response); // Tải lại trang để hiển thị danh sách và thông báo
             } else {
                 request.setAttribute("error", "Unable to update request. Please try again.");
                 doGet(request, response);
@@ -151,34 +144,64 @@ public class ViewDetailServlet extends HttpServlet {
         }
     }
 
-    private LeaveRequest getLeaveRequestById(int requestId) {
-        LeaveRequest leaveRequest = null;
-        String sql = "SELECT lr.LeaveRequestID, lr.UserID, u.FullName, lr.LeaveType, lr.StartDate, lr.EndDate, lr.Reason, lr.Status, lr.ModifiedDate, r.RoleName, m.FullName AS ManagerName " +
+    private List<LeaveRequest> getPendingLeaveRequests(int userId) {
+        List<LeaveRequest> pendingRequests = new ArrayList<>();
+        String sql = "SELECT lr.LeaveRequestID, lr.UserID, lr.LeaveType, lr.StartDate, lr.EndDate, lr.Reason, lr.Status, lr.CreatedDate, lr.ModifiedDate, u.FullName " +
                      "FROM LeaveRequests lr " +
-                     "INNER JOIN Users u ON lr.UserID = u.UserID " +
-                     "LEFT JOIN UserRoles ur ON u.UserID = ur.UserID " +
-                     "LEFT JOIN Roles r ON ur.RoleID = r.RoleID " +
-                     "LEFT JOIN Users m ON u.ManagerID = m.UserID " +
-                     "WHERE lr.LeaveRequestID = ?";
+                     "LEFT JOIN Users u ON lr.UserID = u.UserID " +
+                     "WHERE lr.UserID = ? AND lr.Status = 'Pending' " +
+                     "ORDER BY lr.CreatedDate DESC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                LeaveRequest leaveRequest = new LeaveRequest();
+                leaveRequest.setId(rs.getInt("LeaveRequestID"));
+                leaveRequest.setUserId(rs.getInt("UserID"));
+                leaveRequest.setFullName(rs.getString("FullName") != null ? rs.getString("FullName") : "Unknown");
+                leaveRequest.setLeaveType(rs.getString("LeaveType"));
+                leaveRequest.setStartDate(rs.getDate("StartDate"));
+                leaveRequest.setEndDate(rs.getDate("EndDate"));
+                leaveRequest.setReason(rs.getString("Reason"));
+                leaveRequest.setStatus(rs.getString("Status"));
+                leaveRequest.setCreatedDate(rs.getTimestamp("CreatedDate"));
+                leaveRequest.setModifiedDate(rs.getTimestamp("ModifiedDate"));
+                pendingRequests.add(leaveRequest);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving list of Pending requests: " + e.getMessage());
+        }
+        return pendingRequests;
+    }
+
+    private LeaveRequest getLeaveRequestById(int requestId, int userId) {
+        LeaveRequest leaveRequest = null;
+        String sql = "SELECT lr.LeaveRequestID, lr.UserID, lr.LeaveType, lr.StartDate, lr.EndDate, lr.Reason, lr.Status, lr.CreatedDate, lr.ModifiedDate, u.FullName " +
+                     "FROM LeaveRequests lr " +
+                     "LEFT JOIN Users u ON lr.UserID = u.UserID " +
+                     "WHERE lr.LeaveRequestID = ? AND lr.UserID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, requestId);
+            stmt.setInt(2, userId);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 leaveRequest = new LeaveRequest();
                 leaveRequest.setId(rs.getInt("LeaveRequestID"));
                 leaveRequest.setUserId(rs.getInt("UserID"));
-                leaveRequest.setFullName(rs.getString("FullName"));
+                leaveRequest.setFullName(rs.getString("FullName") != null ? rs.getString("FullName") : "Unknown");
                 leaveRequest.setLeaveType(rs.getString("LeaveType"));
                 leaveRequest.setStartDate(rs.getDate("StartDate"));
                 leaveRequest.setEndDate(rs.getDate("EndDate"));
                 leaveRequest.setReason(rs.getString("Reason"));
                 leaveRequest.setStatus(rs.getString("Status"));
+                leaveRequest.setCreatedDate(rs.getTimestamp("CreatedDate"));
                 leaveRequest.setModifiedDate(rs.getTimestamp("ModifiedDate"));
-                leaveRequest.setRoleName(rs.getString("RoleName") != null ? rs.getString("RoleName") : "Unknown");
-                leaveRequest.setManagerName(rs.getString("ManagerName") != null ? rs.getString("ManagerName") : "None");
             }
         } catch (SQLException e) {
             System.err.println("Error retrieving request details: " + e.getMessage());

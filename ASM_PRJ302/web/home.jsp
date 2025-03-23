@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Trang Chủ - Helios</title>
+    <title>Home - Helios</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/home-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -65,15 +65,15 @@
             <div class="user-info-section">
                 <div class="user-info-card">
                     <div class="user-details">
-                        <h3>Xin Chào, <%= session.getAttribute("fullName") != null ? session.getAttribute("fullName") : "User" %></h3>
-                        <p>Chào mừng bạn đến với Helios - Ứng dụng Quản lý Nghỉ Phép</p>
+                        <h3>Hello, <%= session.getAttribute("fullName") != null ? session.getAttribute("fullName") : "User" %></h3>
+                        <p>Welcome to Helios - Leave Management Application</p>
                     </div>
                 </div>
                 <div class="user-position-card">
                     <div class="position-details">
-                        <h3>Chức Vụ: <%= session.getAttribute("role") != null ? session.getAttribute("role") : "N/A" %></h3>
-                        <p>Phòng ban: <%= session.getAttribute("department") != null ? session.getAttribute("department") : "N/A" %></p>
-                        <p>Bộ phận: <%= session.getAttribute("section") != null ? session.getAttribute("section") : "N/A" %></p>
+                        <h3>Position: <%= session.getAttribute("role") != null ? session.getAttribute("role") : "N/A" %></h3>
+                        <p>Department: <%= session.getAttribute("department") != null ? session.getAttribute("department") : "N/A" %></p>
+                        <p>Section: <%= session.getAttribute("section") != null ? session.getAttribute("section") : "N/A" %></p>
                     </div>
                 </div>
             </div>

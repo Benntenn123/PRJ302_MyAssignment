@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Xem Danh Sách Đơn Xin Phép - Helios</title>
+    <title>View Leave Request List - Helios</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/home-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -25,9 +25,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="create-request.jsp"><i class="fas fa-plus"></i> Create Request</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="edit-request.jsp"><i class="fas fa-edit"></i> Edit Request</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="delete-request.jsp"><i class="fas fa-trash"></i> Delete Request</a>
@@ -63,7 +60,7 @@
 
             <!-- View Requests Section -->
             <section class="application-table-section">
-                <h2>Danh Sách Đơn Xin Phép Của Bạn</h2>
+                <h2>Your Leave Request List</h2>
                 <c:if test="${not empty error}">
                     <div class="alert alert-danger" role="alert">
                         <c:out value="${error}"/>
@@ -80,14 +77,14 @@
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Họ và Tên</th>
-                                <th>Loại Nghỉ</th>
-                                <th>Ngày Bắt Đầu</th>
-                                <th>Ngày Kết Thúc</th>
-                                <th>Lý Do</th>
-                                <th>Trạng Thái</th>
-                                <th>Ngày Tạo</th>
-                                <th>Ngày Cập Nhật</th>
+                                <th>Full Name</th>
+                                <th>Leave Type</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Created Date</th>
+                                <th>Modified Date</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -104,7 +101,7 @@
                                     <td><fmt:formatDate value="${request.createdDate}" pattern="dd/MM/yyyy HH:mm:ss" /></td>
                                     <td><fmt:formatDate value="${request.modifiedDate}" pattern="dd/MM/yyyy HH:mm:ss" /></td>
                                     <td>
-                                        <a href="${pageContext.request.contextPath}/view-detail?id=${request.id}" class="btn btn-primary btn-sm">Xem Chi Tiết</a>
+                                        <a href="${pageContext.request.contextPath}/view-detail?id=${request.id}" class="btn btn-primary btn-sm">View Details</a>
                                     </td>
                                 </tr>
                             </c:forEach>

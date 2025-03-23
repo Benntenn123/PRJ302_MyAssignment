@@ -32,7 +32,7 @@ public class ViewRequestsServlet extends HttpServlet {
         List<LeaveRequest> leaveRequests = getLeaveRequestsByUserId(userId, request);
 
         if (leaveRequests.isEmpty()) {
-            request.setAttribute("message", "Bạn không có đơn xin nghỉ nào.");
+            request.setAttribute("message", "You have no leave requests.");
         } else {
             request.setAttribute("leaveRequests", leaveRequests);
         }
@@ -53,7 +53,7 @@ public class ViewRequestsServlet extends HttpServlet {
                      "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         int page = 1;
-        int pageSize = 10; // Số đơn trên mỗi trang
+        int pageSize = 10; // Number of requests per page
         try {
             page = Integer.parseInt(request.getParameter("page"));
         } catch (NumberFormatException e) {
@@ -72,7 +72,7 @@ public class ViewRequestsServlet extends HttpServlet {
                 LeaveRequest leaveRequest = new LeaveRequest();
                 leaveRequest.setId(rs.getInt("LeaveRequestID"));
                 leaveRequest.setUserId(rs.getInt("UserID"));
-                leaveRequest.setFullName(rs.getString("FullName") != null ? rs.getString("FullName") : "Không xác định");
+                leaveRequest.setFullName(rs.getString("FullName") != null ? rs.getString("FullName") : "Unknown");
                 leaveRequest.setLeaveType(rs.getString("LeaveType"));
                 leaveRequest.setStartDate(rs.getDate("StartDate"));
                 leaveRequest.setEndDate(rs.getDate("EndDate"));
@@ -80,12 +80,12 @@ public class ViewRequestsServlet extends HttpServlet {
                 leaveRequest.setStatus(rs.getString("Status"));
                 leaveRequest.setCreatedDate(rs.getTimestamp("CreatedDate"));
                 leaveRequest.setModifiedDate(rs.getTimestamp("ModifiedDate"));
-                leaveRequest.setRoleName(rs.getString("RoleName") != null ? rs.getString("RoleName") : "Không xác định");
-                leaveRequest.setManagerName(rs.getString("ManagerName") != null ? rs.getString("ManagerName") : "Không có");
+                leaveRequest.setRoleName(rs.getString("RoleName") != null ? rs.getString("RoleName") : "Unknown");
+                leaveRequest.setManagerName(rs.getString("ManagerName") != null ? rs.getString("ManagerName") : "None");
                 leaveRequests.add(leaveRequest);
             }
 
-            // Tính tổng số trang
+            // Calculate total pages
             String countSql = "SELECT COUNT(*) FROM LeaveRequests WHERE UserID = ?";
             try (PreparedStatement countStmt = conn.prepareStatement(countSql)) {
                 countStmt.setString(1, userId);
@@ -98,7 +98,7 @@ public class ViewRequestsServlet extends HttpServlet {
                 }
             }
         } catch (SQLException e) {
-            request.setAttribute("error", "Lỗi khi truy vấn danh sách đơn: " + e.getMessage());
+            request.setAttribute("error", "Error retrieving request list: " + e.getMessage());
         }
         return leaveRequests;
     }

@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Đăng Xuất - Helios</title>
+    <title>Logout - Helios</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/home-style.css">
     <style>
@@ -26,9 +26,9 @@
 <body>
     <div class="logout-container">
         <div class="logout-message">
-            <h2>Đăng Xuất Thành Công</h2>
-            <p>Bạn đã đăng xuất khỏi hệ thống thành công. <br>
-            Bạn sẽ được tự động chuyển hướng về trang đăng nhập trong giây lát...</p>
+            <h2>Logout Successful</h2>
+            <p>You have successfully logged out of the system. <br>
+            You will be automatically redirected to the login page shortly...</p>
         </div>
     </div>
 
