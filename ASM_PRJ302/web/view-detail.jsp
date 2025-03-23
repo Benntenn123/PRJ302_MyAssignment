@@ -86,9 +86,10 @@
                             <p><strong>Status:</strong> ${leaveRequest.status}</p>
                             <p><strong>Last Updated:</strong> <fmt:formatDate value="${leaveRequest.modifiedDate}" pattern="dd/MM/yyyy HH:mm:ss" /></p>
 
-                            <!-- Hiển thị nút "Edit" nếu trạng thái là "Pending" -->
+                            <!-- Hiển thị các nút "Edit" và "Delete" nếu trạng thái là "Pending" -->
                             <c:if test="${leaveRequest.status == 'Pending'}">
                                 <a href="${pageContext.request.contextPath}/view-detail?action=edit&id=${leaveRequest.id}" class="btn btn-primary">Edit</a>
+                                <a href="${pageContext.request.contextPath}/view-detail?action=delete&id=${leaveRequest.id}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this request?');">Delete</a>
                             </c:if>
                             <a href="view-requests" class="btn btn-secondary">Back</a>
                         </div>
@@ -155,9 +156,9 @@
 
         // Validate dates before form submission
         document.querySelector('form')?.addEventListener('submit', function(e) {
-            const startDate = new Date(document.getElementById('startDate').value);
-            const endDate = new Date(document.getElementById('endDate').value);
-            if (startDate > endDate) {
+            const startDate = new Date(document.getElementById('startDate')?.value);
+            const endDate = new Date(document.getElementById('endDate')?.value);
+            if (startDate && endDate && startDate > endDate) {
                 e.preventDefault();
                 alert('Start date must be less than or equal to end date.');
             }

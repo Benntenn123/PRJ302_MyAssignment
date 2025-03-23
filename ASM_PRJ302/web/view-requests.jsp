@@ -71,6 +71,12 @@
                         <c:out value="${message}"/>
                     </div>
                 </c:if>
+                <c:if test="${not empty sessionScope.message}">
+                    <div class="alert alert-success" role="alert">
+                        <c:out value="${sessionScope.message}"/>
+                    </div>
+                    <c:remove var="message" scope="session"/>
+                </c:if>
 
                 <c:if test="${empty message}">
                     <table class="table application-table">

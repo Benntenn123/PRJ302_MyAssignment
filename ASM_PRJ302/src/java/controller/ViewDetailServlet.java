@@ -43,6 +43,13 @@ public class ViewDetailServlet extends HttpServlet {
             return;
         }
 
+        // Xử lý yêu cầu xóa
+        String action = request.getParameter("action");
+        if (action != null && action.equals("delete")) {
+            handleDeleteRequest(request, response, requestId);
+            return;
+        }
+
         // Lấy thông tin chi tiết của yêu cầu
         LeaveRequest leaveRequest = getLeaveRequestById(requestId);
         if (leaveRequest == null) {
@@ -55,7 +62,6 @@ public class ViewDetailServlet extends HttpServlet {
         request.setAttribute("leaveRequest", leaveRequest);
 
         // Kiểm tra nếu người dùng muốn chỉnh sửa (action=edit)
-        String action = request.getParameter("action");
         if (action != null && action.equals("edit")) {
             if (!"Pending".equals(leaveRequest.getStatus())) {
                 request.setAttribute("error", "Only requests in Pending status can be edited.");
@@ -64,7 +70,6 @@ public class ViewDetailServlet extends HttpServlet {
             }
         }
 
-        // Sửa tên file từ "view-Detail.jsp" thành "view-detail.jsp"
         request.getRequestDispatcher("view-detail.jsp").forward(request, response);
     }
 
@@ -148,6 +153,58 @@ public class ViewDetailServlet extends HttpServlet {
         } catch (IllegalArgumentException e) {
             request.setAttribute("error", "Invalid date format: " + e.getMessage());
             doGet(request, response);
+        }
+    }
+
+    private void handleDeleteRequest(HttpServletRequest request, HttpServletResponse response, int requestId)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        // Chuyển userId từ String sang int
+        String userIdStr = (String) session.getAttribute("userId");
+        int userId;
+        try {
+            userId = Integer.parseInt(userIdStr);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Invalid user ID in session: " + userIdStr);
+            request.getRequestDispatcher("view-detail.jsp").forward(request, response);
+            return;
+        }
+
+        // Kiểm tra trạng thái của yêu cầu
+        LeaveRequest leaveRequest = getLeaveRequestById(requestId);
+        if (leaveRequest == null || !"Pending".equals(leaveRequest.getStatus())) {
+            request.setAttribute("error", "Request does not exist or cannot be deleted. Only Pending requests can be deleted.");
+            request.setAttribute("leaveRequest", leaveRequest);
+            request.getRequestDispatcher("view-detail.jsp").forward(request, response);
+            return;
+        }
+
+        // Xóa yêu cầu trong cơ sở dữ liệu
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "DELETE FROM LeaveRequests WHERE LeaveRequestID = ? AND UserID = ? AND Status = 'Pending'")) {
+            stmt.setInt(1, requestId);
+            stmt.setInt(2, userId);
+
+            int rowsDeleted = stmt.executeUpdate();
+            if (rowsDeleted > 0) {
+                // Chuyển hướng về view-requests.jsp với thông báo thành công
+                session.setAttribute("message", "Leave request deleted successfully!");
+                response.sendRedirect("view-requests");
+            } else {
+                request.setAttribute("error", "Unable to delete request. Please try again.");
+                request.setAttribute("leaveRequest", leaveRequest);
+                request.getRequestDispatcher("view-detail.jsp").forward(request, response);
+            }
+        } catch (SQLException e) {
+            request.setAttribute("error", "Error deleting request: " + e.getMessage());
+            request.setAttribute("leaveRequest", leaveRequest);
+            request.getRequestDispatcher("view-detail.jsp").forward(request, response);
         }
     }
 
