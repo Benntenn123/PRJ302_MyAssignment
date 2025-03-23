@@ -34,9 +34,12 @@ public class ViewDetailServlet extends HttpServlet {
 
         try {
             connection = DatabaseConnection.getConnection();
-            String sql = "SELECT lr.LeaveRequestID, u.FullName, lr.LeaveType, lr.StartDate, lr.EndDate, lr.Reason, lr.Status, lr.ModifiedDate " +
+            String sql = "SELECT lr.LeaveRequestID, u.FullName, lr.LeaveType, lr.StartDate, lr.EndDate, lr.Reason, lr.Status, lr.ModifiedDate, r.RoleName, m.FullName AS ManagerName " +
                          "FROM LeaveRequests lr " +
                          "INNER JOIN Users u ON lr.UserID = u.UserID " +
+                         "LEFT JOIN UserRoles ur ON u.UserID = ur.UserID " +
+                         "LEFT JOIN Roles r ON ur.RoleID = r.RoleID " +
+                         "LEFT JOIN Users m ON u.ManagerID = m.UserID " +
                          "WHERE lr.LeaveRequestID = ?";
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, requestId);
@@ -51,6 +54,8 @@ public class ViewDetailServlet extends HttpServlet {
                 leaveRequest.setReason(resultSet.getString("Reason"));
                 leaveRequest.setStatus(resultSet.getString("Status"));
                 leaveRequest.setModifiedDate(resultSet.getTimestamp("ModifiedDate"));
+                leaveRequest.setRoleName(resultSet.getString("RoleName") != null ? resultSet.getString("RoleName") : "Không xác định");
+                leaveRequest.setManagerName(resultSet.getString("ManagerName") != null ? resultSet.getString("ManagerName") : "Không có");
             } else {
                 request.setAttribute("error", "Không tìm thấy đơn xin phép.");
             }

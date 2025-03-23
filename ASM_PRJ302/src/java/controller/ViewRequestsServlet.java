@@ -1,13 +1,13 @@
 package controller;
 
 import dal.DatabaseConnection;
+import model.LeaveRequest;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.LeaveRequest;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,9 +42,12 @@ public class ViewRequestsServlet extends HttpServlet {
 
     private List<LeaveRequest> getLeaveRequestsByUserId(String userId, HttpServletRequest request) {
         List<LeaveRequest> leaveRequests = new ArrayList<>();
-        String sql = "SELECT lr.LeaveRequestID, lr.UserID, lr.LeaveType, lr.StartDate, lr.EndDate, lr.Reason, lr.Status, lr.CreatedDate, lr.ModifiedDate, u.FullName " +
+        String sql = "SELECT lr.LeaveRequestID, lr.UserID, lr.LeaveType, lr.StartDate, lr.EndDate, lr.Reason, lr.Status, lr.CreatedDate, lr.ModifiedDate, u.FullName, r.RoleName, m.FullName AS ManagerName " +
                      "FROM LeaveRequests lr " +
                      "LEFT JOIN Users u ON lr.UserID = u.UserID " +
+                     "LEFT JOIN UserRoles ur ON u.UserID = ur.UserID " +
+                     "LEFT JOIN Roles r ON ur.RoleID = r.RoleID " +
+                     "LEFT JOIN Users m ON u.ManagerID = m.UserID " +
                      "WHERE lr.UserID = ? " +
                      "ORDER BY lr.CreatedDate DESC " +
                      "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
@@ -68,15 +71,17 @@ public class ViewRequestsServlet extends HttpServlet {
             while (rs.next()) {
                 LeaveRequest leaveRequest = new LeaveRequest();
                 leaveRequest.setId(rs.getInt("LeaveRequestID"));
-                leaveRequest.setUserId(rs.getInt("UserID")); // Đã có setUserId
+                leaveRequest.setUserId(rs.getInt("UserID"));
                 leaveRequest.setFullName(rs.getString("FullName") != null ? rs.getString("FullName") : "Không xác định");
                 leaveRequest.setLeaveType(rs.getString("LeaveType"));
                 leaveRequest.setStartDate(rs.getDate("StartDate"));
                 leaveRequest.setEndDate(rs.getDate("EndDate"));
                 leaveRequest.setReason(rs.getString("Reason"));
                 leaveRequest.setStatus(rs.getString("Status"));
-                leaveRequest.setCreatedDate(rs.getTimestamp("CreatedDate")); // Đã có setCreatedDate
+                leaveRequest.setCreatedDate(rs.getTimestamp("CreatedDate"));
                 leaveRequest.setModifiedDate(rs.getTimestamp("ModifiedDate"));
+                leaveRequest.setRoleName(rs.getString("RoleName") != null ? rs.getString("RoleName") : "Không xác định");
+                leaveRequest.setManagerName(rs.getString("ManagerName") != null ? rs.getString("ManagerName") : "Không có");
                 leaveRequests.add(leaveRequest);
             }
 

@@ -25,8 +25,11 @@ public class LoginServlet extends HttpServlet {
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT UserID, FullName, Role, Department, Section " +
-                     "FROM Users WHERE Username = ? AND Password = ?")) {
+                     "SELECT u.UserID, u.FullName, r.RoleName, u.Department, u.Section " +
+                     "FROM Users u " +
+                     "LEFT JOIN UserRoles ur ON u.UserID = ur.UserID " +
+                     "LEFT JOIN Roles r ON ur.RoleID = r.RoleID " +
+                     "WHERE u.Username = ? AND u.Password = ?")) {
             stmt.setString(1, username);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
@@ -35,7 +38,7 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("userId", rs.getString("UserID"));
                 session.setAttribute("fullName", rs.getString("FullName"));
-                session.setAttribute("role", rs.getString("Role"));
+                session.setAttribute("role", rs.getString("RoleName") != null ? rs.getString("RoleName") : "Không xác định");
                 session.setAttribute("department", rs.getString("Department"));
                 session.setAttribute("section", rs.getString("Section"));
                 response.sendRedirect("home");

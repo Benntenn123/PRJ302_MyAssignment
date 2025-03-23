@@ -5,15 +5,17 @@ import java.sql.Timestamp;
 
 public class LeaveRequest {
     private int id;
-    private int userId; // Thêm userId
+    private int userId;
     private String fullName;
     private String leaveType;
     private Date startDate;
     private Date endDate;
     private String reason;
     private String status;
-    private Timestamp createdDate; // Thêm createdDate
+    private Timestamp createdDate;
     private Timestamp modifiedDate;
+    private String roleName; // Thêm roleName
+    private String managerName; // Thêm managerName
 
     // Getters và Setters
     public int getId() { return id; }
@@ -36,6 +38,10 @@ public class LeaveRequest {
     public void setCreatedDate(Timestamp createdDate) { this.createdDate = createdDate; }
     public Timestamp getModifiedDate() { return modifiedDate; }
     public void setModifiedDate(Timestamp modifiedDate) { this.modifiedDate = modifiedDate; }
+    public String getRoleName() { return roleName; }
+    public void setRoleName(String roleName) { this.roleName = roleName; }
+    public String getManagerName() { return managerName; }
+    public void setManagerName(String managerName) { this.managerName = managerName; }
 
     // Thêm toString() để hỗ trợ debug
     @Override
@@ -51,6 +57,8 @@ public class LeaveRequest {
                 ", status='" + status + '\'' +
                 ", createdDate=" + createdDate +
                 ", modifiedDate=" + modifiedDate +
+                ", roleName='" + roleName + '\'' +
+                ", managerName='" + managerName + '\'' +
                 '}';
     }
 }

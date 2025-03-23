@@ -7,8 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/home-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
 </head>
-<body class="body-home">
+<body>
     <%
         if (session.getAttribute("userId") == null) {
             response.sendRedirect("login.jsp");
@@ -20,34 +21,32 @@
         <!-- Sidebar -->
         <nav id="sidebar">
             <div class="logo">Helios</div>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link active" href="home"><i class="fas fa-tachometer-alt"></i> Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="create-request.jsp"><i class="fas fa-plus"></i> Create Request</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="edit-request.jsp"><i class="fas fa-edit"></i> Edit Request</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="delete-request.jsp"><i class="fas fa-trash"></i> Delete Request</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="approve-request.jsp"><i class="fas fa-check"></i> Approve Request</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="view-requests"><i class="fas fa-eye"></i> View Requests</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
+            <a href="${pageContext.request.contextPath}/home" class="nav-link active">
+                <i class="fas fa-tachometer-alt"></i> Home
+            </a>
+            <a href="${pageContext.request.contextPath}/create-request.jsp" class="nav-link">
+                <i class="fas fa-plus"></i> Create Request
+            </a>
+            <a href="${pageContext.request.contextPath}/edit-request.jsp" class="nav-link">
+                <i class="fas fa-edit"></i> Edit Request
+            </a>
+            <a href="${pageContext.request.contextPath}/delete-request.jsp" class="nav-link">
+                <i class="fas fa-trash"></i> Delete Request
+            </a>
+            <a href="${pageContext.request.contextPath}/approve-request.jsp" class="nav-link">
+                <i class="fas fa-check"></i> Approve Request
+            </a>
+            <a href="${pageContext.request.contextPath}/view-requests" class="nav-link">
+                <i class="fas fa-eye"></i> View Requests
+            </a>
+            <a href="${pageContext.request.contextPath}/logout" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
         </nav>
 
         <!-- Main Content -->
         <div id="main-content">
-            <!-- Top Bar (Includes Date) -->
+            <!-- Top Bar -->
             <div class="top-bar">
                 <div class="date" id="current-date"></div>
                 <div class="search-bar">
@@ -58,11 +57,11 @@
                 </div>
                 <div class="welcome">
                     Welcome, <%= session.getAttribute("fullName") != null ? session.getAttribute("fullName") : "User" %>!
-                    <img src="https://via.placeholder.com/40" alt="User Avatar">
+                    <img src="https://via.placeholder.com/30" alt="User Avatar">
                 </div>
             </div>
 
-            <!-- User Info and Role Cards -->
+            <!-- User Info Section -->
             <div class="user-info-section">
                 <div class="user-info-card">
                     <div class="user-details">
@@ -114,12 +113,11 @@
 
     <!-- Footer -->
     <footer class="footer-home">
-        <p>© 2024 Helios. All rights reserved.</p>
+        <p>© 2025 Helios. All rights reserved.</p>
     </footer>
 
     <!-- JavaScript for Real-Time Date -->
     <script>
-        // Function to display the current date
         function displayCurrentDate() {
             const dateElement = document.getElementById("current-date");
             if (dateElement) {
@@ -131,7 +129,6 @@
             }
         }
 
-        // Call the function when the page loads
         document.addEventListener('DOMContentLoaded', displayCurrentDate);
     </script>
 
