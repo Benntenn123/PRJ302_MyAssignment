@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,14 +28,8 @@
             <a href="${pageContext.request.contextPath}/create-request.jsp" class="nav-link">
                 <i class="fas fa-plus"></i> Create Request
             </a>
-            <a href="${pageContext.request.contextPath}/edit-request.jsp" class="nav-link">
-                <i class="fas fa-edit"></i> Edit Request
-            </a>
-            <a href="${pageContext.request.contextPath}/delete-request.jsp" class="nav-link">
-                <i class="fas fa-trash"></i> Delete Request
-            </a>
-            <a href="${pageContext.request.contextPath}/approve-request.jsp" class="nav-link">
-                <i class="fas fa-check"></i> Approve Request
+            <a href="${pageContext.request.contextPath}/view-all-requests" class="nav-link">
+                <i class="fas fa-list"></i> View All Requests
             </a>
             <a href="${pageContext.request.contextPath}/view-requests" class="nav-link">
                 <i class="fas fa-eye"></i> View Requests
@@ -83,17 +78,17 @@
                 <div class="summary-card pending">
                     <i class="fas fa-clock"></i>
                     <h5>Pending Requests</h5>
-                    <p><%= request.getAttribute("pendingCount") != null ? request.getAttribute("pendingCount") : "5" %></p>
+                    <p><%= request.getAttribute("pendingCount") != null ? request.getAttribute("pendingCount") : "0" %></p>
                 </div>
                 <div class="summary-card approved">
                     <i class="fas fa-check-circle"></i>
                     <h5>Approved Requests</h5>
-                    <p><%= request.getAttribute("approvedCount") != null ? request.getAttribute("approvedCount") : "12" %></p>
+                    <p><%= request.getAttribute("approvedCount") != null ? request.getAttribute("approvedCount") : "0" %></p>
                 </div>
                 <div class="summary-card rejected">
                     <i class="fas fa-times-circle"></i>
                     <h5>Rejected Requests</h5>
-                    <p><%= request.getAttribute("rejectedCount") != null ? request.getAttribute("rejectedCount") : "3" %></p>
+                    <p><%= request.getAttribute("rejectedCount") != null ? request.getAttribute("rejectedCount") : "0" %></p>
                 </div>
             </div>
 

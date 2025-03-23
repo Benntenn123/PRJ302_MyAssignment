@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>View My Requests - Helios</title>
+    <title>View All Requests - Helios</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/home-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -20,16 +20,29 @@
     %>
 
     <div id="wrapper">
+        <!-- Sidebar -->
         <nav id="sidebar">
             <div class="logo">Helios</div>
-            <a href="${pageContext.request.contextPath}/home" class="nav-link"><i class="fas fa-tachometer-alt"></i> Home</a>
-            <a href="${pageContext.request.contextPath}/create-request.jsp" class="nav-link"><i class="fas fa-plus"></i> Create Request</a>
-            <a href="${pageContext.request.contextPath}/view-all-requests" class="nav-link"><i class="fas fa-list"></i> View All Requests</a>
-            <a href="${pageContext.request.contextPath}/view-requests" class="nav-link active"><i class="fas fa-eye"></i> View Requests</a>
-            <a href="${pageContext.request.contextPath}/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="${pageContext.request.contextPath}/home" class="nav-link">
+                <i class="fas fa-tachometer-alt"></i> Home
+            </a>
+            <a href="${pageContext.request.contextPath}/create-request.jsp" class="nav-link">
+                <i class="fas fa-plus"></i> Create Request
+            </a>
+            <a href="${pageContext.request.contextPath}/view-all-requests" class="nav-link active">
+                <i class="fas fa-list"></i> View All Requests
+            </a>
+            <a href="${pageContext.request.contextPath}/view-requests" class="nav-link">
+                <i class="fas fa-eye"></i> View Requests
+            </a>
+            <a href="${pageContext.request.contextPath}/logout" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
         </nav>
 
+        <!-- Main Content -->
         <div id="main-content">
+            <!-- Top Bar -->
             <div class="top-bar">
                 <div class="date" id="current-date"></div>
                 <div class="search-bar">
@@ -44,8 +57,10 @@
                 </div>
             </div>
 
-            <h2 style="margin: 20px 0;">My Leave Requests</h2>
+            <!-- Page Content -->
+            <h2 style="margin: 20px 0;">View All Leave Requests</h2>
 
+            <!-- Messages -->
             <c:if test="${not empty message}">
                 <div class="alert alert-success" role="alert" style="margin: 20px;">
                     <c:out value="${message}"/>
@@ -57,6 +72,7 @@
                 </div>
             </c:if>
 
+            <!-- Leave Requests Table -->
             <div style="margin: 20px;">
                 <table class="table table-striped">
                     <thead>
@@ -74,7 +90,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="request" items="${leaveRequests}" varStatus="loop">
+                        <c:if test="${empty allRequests}">
+                            <tr>
+                                <td colspan="10" class="text-center">No requests found.</td>
+                            </tr>
+                        </c:if>
+                        <c:forEach var="request" items="${allRequests}" varStatus="loop">
                             <tr>
                                 <td>${loop.count + (currentPage - 1) * 10}</td>
                                 <td><c:out value="${request.fullName}"/></td>
@@ -101,7 +122,7 @@
                                 <td><fmt:formatDate value="${request.createdDate}" pattern="dd/MM/yyyy HH:mm:ss"/></td>
                                 <td><fmt:formatDate value="${request.modifiedDate}" pattern="dd/MM/yyyy HH:mm:ss"/></td>
                                 <td>
-                                    <a href="${pageContext.request.contextPath}/view-detail?id=${request.id}" class="btn btn-primary btn-sm">View Details</a>
+                                    <a href="view-all-detail?id=${request.id}" class="btn btn-primary btn-sm">View Details</a>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -109,24 +130,25 @@
                 </table>
             </div>
 
+            <!-- Pagination -->
             <c:if test="${totalPages > 1}">
                 <nav aria-label="Page navigation" style="margin: 20px;">
                     <ul class="pagination">
                         <c:if test="${currentPage > 1}">
                             <li class="page-item">
-                                <a class="page-link" href="${pageContext.request.contextPath}/view-requests?page=${currentPage - 1}" aria-label="Previous">
+                                <a class="page-link" href="view-all-requests?page=${currentPage - 1}" aria-label="Previous">
                                     <span aria-hidden="true">«</span>
                                 </a>
                             </li>
                         </c:if>
                         <c:forEach begin="1" end="${totalPages}" var="i">
                             <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                <a class="page-link" href="${pageContext.request.contextPath}/view-requests?page=${i}">${i}</a>
+                                <a class="page-link" href="view-all-requests?page=${i}">${i}</a>
                             </li>
                         </c:forEach>
                         <c:if test="${currentPage < totalPages}">
                             <li class="page-item">
-                                <a class="page-link" href="${pageContext.request.contextPath}/view-requests?page=${currentPage + 1}" aria-label="Next">
+                                <a class="page-link" href="view-all-requests?page=${currentPage + 1}" aria-label="Next">
                                     <span aria-hidden="true">»</span>
                                 </a>
                             </li>
@@ -137,10 +159,12 @@
         </div>
     </div>
 
+    <!-- Footer -->
     <footer class="footer-home">
         <p>© 2025 Helios. All rights reserved.</p>
     </footer>
 
+    <!-- JavaScript for Real-Time Date -->
     <script>
         function displayCurrentDate() {
             const dateElement = document.getElementById("current-date");
@@ -148,10 +172,14 @@
                 const today = new Date();
                 const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
                 dateElement.textContent = today.toLocaleDateString('en-US', options);
+            } else {
+                console.error("Element with ID 'current-date' not found.");
             }
         }
+
         document.addEventListener('DOMContentLoaded', displayCurrentDate);
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -5,15 +5,16 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Delete Leave Request - Helios</title>
+    <title>Leave Request Details - Helios</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/home-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="body-home">
-    <c:if test="${empty sessionScope.userId}">
-        <c:redirect url="login.jsp"/>
-    </c:if>
+    <% if (session.getAttribute("userId") == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    } %>
 
     <div id="wrapper">
         <!-- Sidebar -->
@@ -27,13 +28,13 @@
                     <a class="nav-link" href="create-request.jsp"><i class="fas fa-plus"></i> Create Request</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="edit-request.jsp"><i class="fas fa-edit"></i> Edit Request</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="delete-request.jsp"><i class="fas fa-trash"></i> Delete Request</a>
+                    <a class="nav-link" href="delete-request.jsp"><i class="fas fa-trash"></i> Delete Request</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="approve-request.jsp"><i class="fas fa-check"></i> Approve Request</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="view-all-requests"><i class="fas fa-list"></i> View All Requests</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="view-requests"><i class="fas fa-eye"></i> View Requests</a>
@@ -61,55 +62,51 @@
                 </div>
             </div>
 
-            <!-- Delete Request Section -->
-            <section class="function-page-section">
-                <h2>Function: Delete Leave Request</h2>
+            <!-- View Detail Section -->
+            <section class="application-table-section">
+                <h2>Leave Request Details</h2>
                 <c:if test="${not empty error}">
                     <div class="alert alert-danger" role="alert">
                         <c:out value="${error}"/>
                     </div>
                 </c:if>
                 <c:if test="${not empty message}">
-                    <div class="alert alert-info" role="alert">
+                    <div class="alert alert-success" role="alert">
                         <c:out value="${message}"/>
                     </div>
                 </c:if>
 
-                <!-- List of "Pending" Requests -->
-                <h3>List of Pending Requests</h3>
-                <c:if test="${not empty pendingRequests}">
-                    <table class="table application-table">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Full Name</th>
-                                <th>Leave Type</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Reason</th>
-                                <th>Status</th>
-                                <th>Created Date</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach var="request" items="${pendingRequests}" varStatus="loop">
-                                <tr>
-                                    <td>${loop.count}</td>
-                                    <td><c:out value="${request.fullName}"/></td>
-                                    <td><c:out value="${request.leaveType}"/></td>
-                                    <td><fmt:formatDate value="${request.startDate}" pattern="dd/MM/yyyy" /></td>
-                                    <td><fmt:formatDate value="${request.endDate}" pattern="dd/MM/yyyy" /></td>
-                                    <td><c:out value="${request.reason}"/></td>
-                                    <td><c:out value="${request.status}"/></td>
-                                    <td><fmt:formatDate value="${request.createdDate}" pattern="dd/MM/yyyy HH:mm:ss" /></td>
-                                    <td>
-                                        <a href="${pageContext.request.contextPath}/delete-request?action=delete&id=${request.id}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this request?')">Delete</a>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
+                <c:if test="${not empty leaveRequest}">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Request Information</h5>
+                            <p><strong>Request ID:</strong> ${leaveRequest.id}</p>
+                            <p><strong>Full Name:</strong> ${leaveRequest.fullName}</p>
+                            <p><strong>Leave Type:</strong> ${leaveRequest.leaveType}</p>
+                            <p><strong>Start Date:</strong> <fmt:formatDate value="${leaveRequest.startDate}" pattern="dd/MM/yyyy" /></p>
+                            <p><strong>End Date:</strong> <fmt:formatDate value="${leaveRequest.endDate}" pattern="dd/MM/yyyy" /></p>
+                            <p><strong>Reason:</strong> ${leaveRequest.reason}</p>
+                            <p><strong>Status:</strong> ${leaveRequest.status}</p>
+                            <p><strong>Last Updated:</strong> <fmt:formatDate value="${leaveRequest.modifiedDate}" pattern="dd/MM/yyyy HH:mm:ss" /></p>
+                            <p><strong>Role:</strong> ${leaveRequest.roleName}</p>
+                            <p><strong>Manager:</strong> ${leaveRequest.managerName}</p>
+
+                            <!-- Hiển thị nút "Approve" và "Reject" nếu trạng thái là "Pending" -->
+                            <c:if test="${leaveRequest.status == 'Pending'}">
+                                <form action="${pageContext.request.contextPath}/view-all-detail" method="post" style="display: inline;">
+                                    <input type="hidden" name="id" value="${leaveRequest.id}">
+                                    <input type="hidden" name="action" value="approve">
+                                    <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to approve this request?');">Approve</button>
+                                </form>
+                                <form action="${pageContext.request.contextPath}/view-all-detail" method="post" style="display: inline;">
+                                    <input type="hidden" name="id" value="${leaveRequest.id}">
+                                    <input type="hidden" name="action" value="reject">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to reject this request?');">Reject</button>
+                                </form>
+                            </c:if>
+                            <a href="view-all-requests" class="btn btn-secondary">Back</a>
+                        </div>
+                    </div>
                 </c:if>
             </section>
         </div>
@@ -117,7 +114,7 @@
 
     <!-- Footer -->
     <footer class="footer-home">
-        <p>© 2024 Helios. All rights reserved.</p>
+        <p>© 2025 Helios. All rights reserved.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

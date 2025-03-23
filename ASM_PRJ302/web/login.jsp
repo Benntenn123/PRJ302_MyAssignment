@@ -1,48 +1,62 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Login Page - Selene</title> <!-- Page title, company name changed to Selene -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="login-style.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    </head>
-    <body class="body-login body-login-visual"> <!-- Class body-login-visual for image background -->
-        <div class="login-container login-container-visual"> <!-- Class login-container-visual for container with image -->
-            <div class="login-header">
-                <div class="logo logo-visual">Selene</div> <!-- Logo "Selene" with class logo-visual -->
-                <h2 class="header-visual">Welcome Back</h2> <!-- Welcome message with class header-visual -->
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Login - Helios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/home-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Helios - Login</h2>
+
+        <!-- Messages -->
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger" role="alert">
+                <c:out value="${error}"/>
             </div>
+        </c:if>
 
-            <% if (request.getAttribute("loginError") != null) { %>
-                <div class="alert alert-danger" role="alert">
-                    <%= request.getAttribute("loginError") %>
-                </div>
-            <% } %>
+        <!-- Login Form -->
+        <form action="login" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+    </div>
 
-            <form action="LoginServlet" method="post" class="login-form login-form-visual"> <!-- Login form with class login-form-visual -->
-                <div class="form-group form-group-visual"> <!-- Form group with class form-group-visual -->
-                    <label for="username" class="label-visual">Username</label> <!-- Label "Username" with class label-visual -->
-                    <div class="input-group input-group-visual"> <!-- Input group with class input-group-visual -->
-                        <span class="input-group-icon input-group-icon-visual"><i class="fas fa-envelope"></i></span> <!-- Email icon (Font Awesome) with class icon-visual -->
-                        <input type="text" class="form-control form-control-visual" id="username" name="username" placeholder="Enter your username" required> <!-- Username input, placeholder and class control-visual -->
-                    </div>
-                </div>
-                <div class="form-group form-group-visual"> <!-- Form group with class form-group-visual -->
-                    <label for="password" class="label-visual">Password</label> <!-- Label "Password" with class label-visual -->
-                    <div class="input-group input-group-visual"> <!-- Input group with class input-group-visual -->
-                        <span class="input-group-icon input-group-icon-visual"><i class="fas fa-key"></i></span> <!-- Lock icon (Font Awesome) with class icon-visual -->
-                        <input type="password" class="form-control form-control-visual" id="password" name="password" placeholder="Enter your password" required> <!-- Password input, placeholder and class control-visual -->
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block sign-in-button sign-in-button-visual">Login</button> <!-- "Login" button with class button-visual -->
-            </form>
-            <!-- REMOVED login-footer -->
-        </div>
-
-        <script src="https://kit.fontawesome.com/your_fontawesome_kit.js"></script> <!-- Font Awesome link (REPLACE with your kit) -->
-    </body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

@@ -28,17 +28,16 @@ public class DeleteRequestServlet extends HttpServlet {
             return;
         }
 
-        String userId = (String) session.getAttribute("userId");
+        int userId = (Integer) session.getAttribute("userId");
         String action = request.getParameter("action");
         String requestId = request.getParameter("id");
 
-        if (action != null && action.equals("delete") && requestId != null) {
-            // Process request deletion
+        if ("delete".equals(action) && requestId != null) {
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(
                          "DELETE FROM LeaveRequests WHERE LeaveRequestID = ? AND UserID = ? AND Status = 'Pending'")) {
                 stmt.setInt(1, Integer.parseInt(requestId));
-                stmt.setString(2, userId);
+                stmt.setInt(2, userId);
                 int rowsDeleted = stmt.executeUpdate();
                 if (rowsDeleted > 0) {
                     request.setAttribute("message", "Request deleted successfully.");
@@ -50,7 +49,6 @@ public class DeleteRequestServlet extends HttpServlet {
             }
         }
 
-        // Display list of "Pending" requests
         List<LeaveRequest> pendingRequests = getPendingLeaveRequests(userId);
         if (pendingRequests.isEmpty()) {
             request.setAttribute("message", "You have no requests in Pending status to delete.");
@@ -67,7 +65,7 @@ public class DeleteRequestServlet extends HttpServlet {
         doGet(request, response);
     }
 
-    private List<LeaveRequest> getPendingLeaveRequests(String userId) {
+    private List<LeaveRequest> getPendingLeaveRequests(int userId) {
         List<LeaveRequest> pendingRequests = new ArrayList<>();
         String sql = "SELECT lr.LeaveRequestID, lr.UserID, lr.LeaveType, lr.StartDate, lr.EndDate, lr.Reason, lr.Status, lr.CreatedDate, lr.ModifiedDate, u.FullName " +
                      "FROM LeaveRequests lr " +
@@ -77,9 +75,8 @@ public class DeleteRequestServlet extends HttpServlet {
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, userId);
+            stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
-
             while (rs.next()) {
                 LeaveRequest leaveRequest = new LeaveRequest();
                 leaveRequest.setId(rs.getInt("LeaveRequestID"));
@@ -95,7 +92,7 @@ public class DeleteRequestServlet extends HttpServlet {
                 pendingRequests.add(leaveRequest);
             }
         } catch (SQLException e) {
-            System.err.println("Error retrieving list of Pending requests: " + e.getMessage());
+            System.err.println("Error retrieving pending requests: " + e.getMessage());
         }
         return pendingRequests;
     }
