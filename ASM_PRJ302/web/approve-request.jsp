@@ -22,7 +22,7 @@
             <div class="logo">Helios</div>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="home"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a class="nav-link" href="home"><i class="fas fa-tachometer-alt"></i> Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="create-request.jsp"><i class="fas fa-plus"></i> Create Request</a>
