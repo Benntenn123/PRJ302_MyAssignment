@@ -47,9 +47,12 @@ public class SubmitRequestServlet extends HttpServlet {
             Date startDate = dateFormat.parse(startDateStr);
             Date endDate = dateFormat.parse(endDateStr);
             Date currentDate = new Date();
+            // Chuẩn hóa currentDate về đầu ngày (00:00:00)
+            String currentDateStr = dateFormat.format(currentDate);
+            Date normalizedCurrentDate = dateFormat.parse(currentDateStr);
             Date maxDate = new Date(currentDate.getTime() + ONE_YEAR_MILLIS);
 
-            if (startDate.before(currentDate)) {
+            if (startDate.before(normalizedCurrentDate)) {
                 request.setAttribute("error", "Start date cannot be in the past.");
                 request.getRequestDispatcher("create-request.jsp").forward(request, response);
                 return;

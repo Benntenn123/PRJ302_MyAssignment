@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.sql.Date" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,9 +18,10 @@
             response.sendRedirect("login.jsp");
             return;
         }
-        String today = new Date(System.currentTimeMillis()).toString();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String today = dateFormat.format(new Date(System.currentTimeMillis()));
         long oneYearFromNow = System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000);
-        String maxDate = new Date(oneYearFromNow).toString();
+        String maxDate = dateFormat.format(new Date(oneYearFromNow));
     %>
 
     <div id="wrapper">
