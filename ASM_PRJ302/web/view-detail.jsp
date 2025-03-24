@@ -14,7 +14,12 @@
     <% if (session.getAttribute("userId") == null) {
         response.sendRedirect("login.jsp");
         return;
-    } %>
+    }
+    
+    // Get user role
+    String role = (String) session.getAttribute("role");
+    boolean isManager = role != null && !role.equals("Employee");
+    %>
 
     <div id="wrapper">
         <!-- Sidebar -->
@@ -36,6 +41,13 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="view-requests"><i class="fas fa-eye"></i> View Requests</a>
                 </li>
+                <% if (isManager) { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/agenda">
+                        <i class="fas fa-calendar-alt"></i> Team Agenda
+                    </a>
+                </li>
+                <% } %>
                 <li class="nav-item">
                     <a class="nav-link" href="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </li>
@@ -134,7 +146,7 @@
 
     <!-- Footer -->
     <footer class="footer-home">
-        <p>© 2024 Helios. All rights reserved.</p>
+        <p>© 2025 Helios. All rights reserved.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

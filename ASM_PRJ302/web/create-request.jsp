@@ -22,6 +22,10 @@
         String today = dateFormat.format(new Date(System.currentTimeMillis()));
         long oneYearFromNow = System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000);
         String maxDate = dateFormat.format(new Date(oneYearFromNow));
+        
+        // Get user role
+        String role = (String) session.getAttribute("role");
+        boolean isManager = role != null && !role.equals("Employee");
     %>
 
     <div id="wrapper">
@@ -31,6 +35,11 @@
             <a href="${pageContext.request.contextPath}/create-request.jsp" class="nav-link active"><i class="fas fa-plus"></i> Create Request</a>
             <a href="${pageContext.request.contextPath}/view-all-requests" class="nav-link"><i class="fas fa-list"></i> View All Requests</a>
             <a href="${pageContext.request.contextPath}/view-requests" class="nav-link"><i class="fas fa-eye"></i> View Requests</a>
+            <% if (isManager) { %>
+            <a href="${pageContext.request.contextPath}/agenda" class="nav-link">
+                <i class="fas fa-calendar-alt"></i> Team Agenda
+            </a>
+            <% } %>
             <a href="${pageContext.request.contextPath}/logout" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </nav>
 

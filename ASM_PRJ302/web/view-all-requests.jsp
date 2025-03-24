@@ -17,6 +17,10 @@
             response.sendRedirect("login.jsp");
             return;
         }
+        
+        // Get user role
+        String role = (String) session.getAttribute("role");
+        boolean isManager = role != null && !role.equals("Employee");
     %>
 
     <div id="wrapper">
@@ -35,6 +39,11 @@
             <a href="${pageContext.request.contextPath}/view-requests" class="nav-link">
                 <i class="fas fa-eye"></i> View Requests
             </a>
+            <% if (isManager) { %>
+            <a href="${pageContext.request.contextPath}/agenda" class="nav-link">
+                <i class="fas fa-calendar-alt"></i> Team Agenda
+            </a>
+            <% } %>
             <a href="${pageContext.request.contextPath}/logout" class="nav-link">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
